@@ -1,38 +1,15 @@
-import React, { useEffect, useState } from 'react'
-import labelPriceDiscont from './labelPriceDiscont'
+import React, { useState } from 'react'
+import LabelPriceDiscont from './LabelPriceDiscont'
 import rupiahFormat from '../utils/rupiahFormat'
 import { countdownTime } from '../utils/epochTranslation'
 import { IconShoppingCartPlus } from '@tabler/icons-react'
 import { useSWRContext } from '../store/context/swr-context'
+import useCurrentDate from '../hooks/useCurrentDate'
 
 function CardProduct({ data }) {
   const { profileStore } = useSWRContext()
-  const [dateNow, setDateNow] = useState()
   const [isLoading, setIsLoading] = useState(true)
-  const [discount, setDiscount] = useState(0)
-
-  useEffect(() => {
-    if (profileStore?.discount) {
-      setDiscount(
-        parseInt(data.discount) + parseInt(profileStore.discount ?? 0)
-      )
-    } else {
-      setDiscount(data.discount)
-    }
-  }, [profileStore, data])
-
-  setInterval(() => {
-    setDate()
-  }, 500)
-
-  const setDate = () => {
-    const now = new Date()
-    setDateNow(now)
-  }
-
-  useEffect(() => {
-    setDate()
-  }, [])
+  const currentDate = useCurrentDate()
 
   return (
     <div className="w-52 h-[400px] rounded-md overflow-hidden border dark:bg-slate-800 dark:border-slate-600 relative">
@@ -68,16 +45,20 @@ function CardProduct({ data }) {
           </div>
         </div>
         <h3 className="capitalize font-medium">{data.nameProduct}</h3>
-        {discount === 0 ? (
-          <h1 className="text-[20px] font-bold">{rupiahFormat(data.price)}</h1>
+        {data.discount > 0 || profileStore?.discount > 0 ? (
+          <LabelPriceDiscont
+            price={data.price}
+            discountProduct={data.discount}
+            discountStore={profileStore?.discount}
+          />
         ) : (
-          labelPriceDiscont(data.price, discount)
+          <h1 className="text-[20px] font-bold">{rupiahFormat(data.price)}</h1>
         )}
 
-        {dateNow && (
+        {currentDate && (
           <div className="absolute bottom-2 right-0 w-full flex justify-between px-3">
             <p className="text-xs">
-              Update {countdownTime(parseInt(data.updatedAt), dateNow)}
+              Update {countdownTime(parseInt(data.updatedAt), currentDate)}
             </p>
             <div className="flex gap-2 fill-gray-600">
               <svg
@@ -86,7 +67,7 @@ function CardProduct({ data }) {
                 viewBox="0 0 448 512">
                 <path d="M50.7 58.5L0 160H208V32H93.7C75.5 32 58.9 42.3 50.7 58.5zM240 160H448L397.3 58.5C389.1 42.3 372.5 32 354.3 32H240V160zm208 32H0V416c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V192z" />
               </svg>
-              <p className="text-sm font-medium">{data.stoke}</p>
+              <p className="text-sm font-medium">{data.stock}</p>
             </div>
           </div>
         )}

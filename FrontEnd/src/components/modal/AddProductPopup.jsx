@@ -22,7 +22,7 @@ export default function AddProduct({ getCategory }) {
   const [nameProduct, setNameProduct] = useState('')
   const [priceProduct, setPriceProduct] = useState('')
   const [discountProduct, setDiscountProduct] = useState(0)
-  const [stokeProduct, setStokeProduct] = useState('')
+  const [stockProduct, setstockProduct] = useState('')
   const [detailProduct, setDetailProduct] = useState('')
   const [loading, setLoading] = useState(false)
   const [value, setValue] = useState('')
@@ -58,7 +58,7 @@ export default function AddProduct({ getCategory }) {
     setValue('')
     setPriceProduct('')
     setDiscountProduct('')
-    setStokeProduct('')
+    setstockProduct('')
     setDetailProduct('')
     setSelectedFile(null)
   }, [isOpen])
@@ -104,7 +104,7 @@ export default function AddProduct({ getCategory }) {
       nameProduct &&
       priceProduct &&
       discountProduct &&
-      stokeProduct &&
+      stockProduct &&
       detailProduct &&
       value &&
       preview
@@ -116,7 +116,7 @@ export default function AddProduct({ getCategory }) {
             nameProduct,
             price: priceProduct,
             discount: discountProduct,
-            stoke: stokeProduct,
+            stock: stockProduct,
             category: value,
             detail: detailProduct,
             image: selectedFile,
@@ -217,13 +217,13 @@ export default function AddProduct({ getCategory }) {
                   />
                 </div>
                 <div>
-                  <Label htmlFor="stoke" text="stoke :" />
+                  <Label htmlFor="stock" text="stock :" />
                   <Input
                     type="number"
-                    name="stoke"
+                    name="stock"
                     placeholder="1"
-                    value={stokeProduct}
-                    onChange={e => setStokeProduct(e.target.value)}
+                    value={stockProduct}
+                    onChange={e => setstockProduct(e.target.value)}
                     required
                   />
                 </div>

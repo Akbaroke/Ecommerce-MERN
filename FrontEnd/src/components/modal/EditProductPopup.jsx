@@ -26,7 +26,7 @@ export default function EditProductPopup({
   const [nameProduct, setNameProduct] = useState('')
   const [priceProduct, setPriceProduct] = useState()
   const [discountProduct, setDiscountProduct] = useState('')
-  const [stokeProduct, setStokeProduct] = useState()
+  const [stockProduct, setstockProduct] = useState()
   const [detailProduct, setDetailProduct] = useState('')
   const [loading, setLoading] = useState(false)
   const [value, setValue] = useState('')
@@ -102,7 +102,7 @@ export default function EditProductPopup({
         setNameProduct(data.nameProduct)
         setPriceProduct(data.price)
         setDiscountProduct(data.discount)
-        setStokeProduct(data.stoke)
+        setstockProduct(data.stock)
         setDetailProduct(data.detail)
         setValue(data.category)
         setPreview(data.image.secure_url)
@@ -114,7 +114,7 @@ export default function EditProductPopup({
     if (
       nameProduct &&
       priceProduct &&
-      stokeProduct &&
+      stockProduct &&
       detailProduct &&
       value &&
       preview
@@ -128,7 +128,7 @@ export default function EditProductPopup({
               nameProduct,
               price: priceProduct,
               discount: discountProduct?.length > 0 ? discountProduct : 0,
-              stoke: stokeProduct,
+              stock: stockProduct,
               category: value,
               detail: detailProduct,
               image: selectedFile?.length > 0 ? selectedFile : undefined,
@@ -234,13 +234,13 @@ export default function EditProductPopup({
                   />
                 </div>
                 <div>
-                  <Label htmlFor="stoke" text="stoke :" />
+                  <Label htmlFor="stock" text="stock :" />
                   <Input
                     type="number"
-                    name="stoke"
+                    name="stock"
                     placeholder="1"
-                    value={stokeProduct}
-                    onChange={e => setStokeProduct(e.target.value)}
+                    value={stockProduct}
+                    onChange={e => setstockProduct(e.target.value)}
                     maxLength={10}
                     required
                   />
