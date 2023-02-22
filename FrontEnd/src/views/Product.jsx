@@ -111,7 +111,7 @@ function Product() {
                     Discount
                   </th>
                   <th scope="col" className="px-6 py-3">
-                    Stoke
+                    stock
                   </th>
                   <th scope="col" className="px-6 py-3 text-center">
                     Action
@@ -167,7 +167,7 @@ function Product() {
                           </span>
                         )}
                       </td>
-                      <td className="px-6 py-4">{product.stoke}</td>
+                      <td className="px-6 py-4">{product.stock}</td>
                       <td className="px-6 py-4">
                         <div className="flex items-center justify-center px-6 py-4 space-x-3 h-max">
                           <p
