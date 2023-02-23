@@ -23,7 +23,8 @@ const updateUser = (req, res, next) => __awaiter(void 0, void 0, void 0, functio
             where: { id: userId },
             attributes: ["id", "idImage", "password"],
             include: [{ model: image_model_1.default, as: "image", attributes: ["idCloud"] }],
-        }).then((value) => __awaiter(void 0, void 0, void 0, function* () {
+        })
+            .then((value) => __awaiter(void 0, void 0, void 0, function* () {
             var _a;
             let result = {
                 idImage: value === null || value === void 0 ? void 0 : value.getDataValue("idImage"),
@@ -36,7 +37,11 @@ const updateUser = (req, res, next) => __awaiter(void 0, void 0, void 0, functio
                     yield image_model_1.default.create({
                         idCloud: public_id,
                         secure_url,
-                    }).then(image => Object.assign(result, { idImage: image === null || image === void 0 ? void 0 : image.getDataValue("idImage") }));
+                    })
+                        .then(image => Object.assign(result, { idImage: image === null || image === void 0 ? void 0 : image.getDataValue("idImage") }))
+                        .catch(error => {
+                        throw new Error(error);
+                    });
                 }
                 else {
                     const { secure_url, public_id } = yield cloud_config_1.default.uploader.upload(image === null || image === void 0 ? void 0 : image.path, {
@@ -65,7 +70,10 @@ const updateUser = (req, res, next) => __awaiter(void 0, void 0, void 0, functio
                 }, { where: { id: userId } });
             }
             res.status(200).json({ success: true, data: { message: "success" } });
-        }));
+        }))
+            .catch(error => {
+            throw new Error(error);
+        });
     }
     catch (error) {
         next(error);

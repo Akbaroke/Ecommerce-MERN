@@ -11,52 +11,60 @@ const updateUser = async (req: Request, res: Response, next: NextFunction) => {
       where: { id: userId },
       attributes: ["id", "idImage", "password"],
       include: [{ model: Image, as: "image", attributes: ["idCloud"] }],
-    }).then(async (value): Promise<any> => {
-      let result = {
-        idImage: value?.getDataValue("idImage"),
-      };
-      if (image !== undefined) {
-        if (value?.getDataValue("idImage") === null || !value?.getDataValue("idImage")) {
-          const { secure_url, public_id } = await cloud.uploader.upload(image?.path as string, {
-            folder: `profile/${userId}`,
-          });
-          await Image.create({
-            idCloud: public_id as string,
-            secure_url,
-          }).then(image => Object.assign(result, { idImage: image?.getDataValue("idImage") }));
-        } else {
-          const { secure_url, public_id } = await cloud.uploader.upload(image?.path as string, {
-            public_id: value?.image.idCloud as string,
-          });
-          await Image.update(
-            {
-              idCloud: public_id,
+    })
+      .then(async (value): Promise<any> => {
+        let result = {
+          idImage: value?.getDataValue("idImage"),
+        };
+        if (image !== undefined) {
+          if (value?.getDataValue("idImage") === null || !value?.getDataValue("idImage")) {
+            const { secure_url, public_id } = await cloud.uploader.upload(image?.path as string, {
+              folder: `profile/${userId}`,
+            });
+            await Image.create({
+              idCloud: public_id as string,
               secure_url,
+            })
+              .then(image => Object.assign(result, { idImage: image?.getDataValue("idImage") }))
+              .catch(error => {
+                throw new Error(error);
+              });
+          } else {
+            const { secure_url, public_id } = await cloud.uploader.upload(image?.path as string, {
+              public_id: value?.image.idCloud as string,
+            });
+            await Image.update(
+              {
+                idCloud: public_id,
+                secure_url,
+              },
+              { where: { idImage: value.getDataValue("idImage") as string } }
+            );
+          }
+        }
+        if (oldPassword !== undefined || newPassword !== undefined) {
+          if (!(await value?.comparePassword?.(oldPassword))) {
+            return res.status(401).json({ success: false, error: { message: "password invalid" } });
+          }
+          await value?.update({
+            nama,
+            password: newPassword,
+            idImage: result.idImage,
+          });
+        } else {
+          await User.update(
+            {
+              nama,
+              idImage: result.idImage,
             },
-            { where: { idImage: value.getDataValue("idImage") as string } }
+            { where: { id: userId } }
           );
         }
-      }
-      if (oldPassword !== undefined || newPassword !== undefined) {
-        if (!(await value?.comparePassword?.(oldPassword))) {
-          return res.status(401).json({ success: false, error: { message: "password invalid" } });
-        }
-        await value?.update({
-          nama,
-          password: newPassword,
-          idImage: result.idImage,
-        });
-      } else {
-        await User.update(
-          {
-            nama,
-            idImage: result.idImage,
-          },
-          { where: { id: userId } }
-        );
-      }
-      res.status(200).json({ success: true, data: { message: "success" } });
-    });
+        res.status(200).json({ success: true, data: { message: "success" } });
+      })
+      .catch(error => {
+        throw new Error(error);
+      });
   } catch (error) {
     next(error);
   }

@@ -21,10 +21,11 @@ const get = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     let page = Number.isNaN(Number(req.query.page)) ? 1 : Number(req.query.page);
     let start = (page - 1) * limit;
     let end = page * limit;
+    const { idStore } = req.params;
     const { userId } = req.USER;
     try {
         yield cart_model_1.default.findAll({
-            where: { userId },
+            where: { userId, idStore },
             attributes: ["count", "idStore", "idProduct"],
             order: [["updatedAt", "ASC"]],
             limit: limit,
@@ -35,7 +36,7 @@ const get = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
             for (const value of values) {
                 const product = yield product_model_1.default.findOne({
                     where: {
-                        idStore: value.getDataValue("idStore"),
+                        idStore,
                         idProduct: value.getDataValue("idProduct"),
                     },
                     attributes: ["discount", "price"],
@@ -44,7 +45,7 @@ const get = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
                 if (!product) {
                     yield cart_model_1.default.destroy({
                         where: {
-                            idStore: value.getDataValue("idStore"),
+                            idStore,
                             idProduct: value.getDataValue("idProduct"),
                             userId,
                         },
@@ -64,7 +65,7 @@ const get = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
                         updatedAt: Number(new Date().getTime()),
                     }, {
                         where: {
-                            idStore: value.getDataValue("idStore"),
+                            idStore,
                             idProduct: value.getDataValue("idProduct"),
                             userId,
                         },
@@ -74,7 +75,7 @@ const get = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
         }))
             .then(() => __awaiter(void 0, void 0, void 0, function* () {
             const cart = yield cart_model_1.default.findAndCountAll({
-                where: { userId },
+                where: { userId, idStore },
                 attributes: ["count", "price", "totalPrice"],
                 include: [
                     {

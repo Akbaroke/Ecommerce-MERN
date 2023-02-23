@@ -19,12 +19,19 @@ const updateProduct = async (req: Request, res: Response, next: NextFunction): P
         },
         attributes: ["idImage"],
         include: [{ model: Image, as: "image", attributes: ["idCloud"] }],
-      }).then(async value => {
-        const { secure_url, public_id } = await cloud.uploader.upload(image?.path as string, {
-          public_id: value?.image.idCloud as string,
+      })
+        .then(async value => {
+          const { secure_url, public_id } = await cloud.uploader.upload(image?.path as string, {
+            public_id: value?.image.idCloud as string,
+          });
+          await Image.update(
+            { secure_url, idCloud: public_id },
+            { where: { idImage: value?.getDataValue("idImage") } }
+          );
+        })
+        .catch(error => {
+          throw new Error(error);
         });
-        await Image.update({ secure_url, idCloud: public_id }, { where: { idImage: value?.getDataValue("idImage") } });
-      });
     }
     await Product.update(
       {
