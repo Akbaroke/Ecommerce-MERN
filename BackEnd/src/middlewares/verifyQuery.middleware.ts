@@ -16,9 +16,9 @@ const validateQuery = (schema: ObjectSchema) => {
 
 const query = {
   get: joi.object({
-    limit: joi.string().optional().label("Label"),
-    page: joi.string().optional().label("Page"),
-    search: joi.string().optional().label("Search"),
+    limit: joi.number().integer().min(0).max(10).label("Label"),
+    page: joi.string().label("Page"),
+    search: joi.string().label("Search"),
   }),
   isIp: joi.object({
     is: joi.string().required().label("is"),
