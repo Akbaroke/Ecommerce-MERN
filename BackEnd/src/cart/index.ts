@@ -12,8 +12,8 @@ const route: Router = Router();
 route
   .route("/cart")
   .get(verifyToken, get)
-  .post(verifyToken, validateQuery(query.cart.addUpdateAndDelete), validateSchema(schema.Cart.addAndUpdate), add)
-  .put(verifyToken, validateQuery(query.cart.addUpdateAndDelete), validateSchema(schema.Cart.addAndUpdate), update)
-  .delete(verifyToken, validateQuery(query.cart.addUpdateAndDelete), deleteCart);
+  .post(verifyToken, validateQuery(query.isIp), validateSchema(schema.Cart.addAndUpdate), add)
+  .put(verifyToken, validateQuery(query.isIp), validateSchema(schema.Cart.addAndUpdate), update)
+  .delete(verifyToken, validateQuery(query.isIp), deleteCart);
 
 export default route;

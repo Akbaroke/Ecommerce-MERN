@@ -98,7 +98,7 @@ const get = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
                 Object.assign(pagination, { prev: { page: page - 1, limit, remaining: count - (count - start) } });
             }
             if (page > Math.ceil(count / limit)) {
-                Object.assign(pagination, { prev: { Premaining: count } });
+                Object.assign(pagination, { prev: { remaining: count } });
             }
             res.status(200).json({ success: true, pagination, data: cart });
         }))
