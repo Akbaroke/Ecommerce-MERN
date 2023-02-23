@@ -42,8 +42,8 @@ exports.verifyToken = verifyToken;
 const verifyTokenAndAuthorization = (req, res, next) => {
     try {
         verifyToken(req, res, () => {
-            const { id, role } = req.USER;
-            if (role === "admin" || id === req.params.id)
+            const { userId, role } = req.USER;
+            if (role === "admin" || userId === req.params.userId)
                 return next();
             res.status(403).json({
                 success: false,

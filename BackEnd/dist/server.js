@@ -14,7 +14,8 @@ const index_1 = __importDefault(require("./auth/index"));
 const index_2 = __importDefault(require("./stores/index"));
 const index_3 = __importDefault(require("./products/index"));
 const index_4 = __importDefault(require("./cart/index"));
-const index_5 = __importDefault(require("./others/index"));
+const index_5 = __importDefault(require("./user/index"));
+const index_6 = __importDefault(require("./others/index"));
 const otp_service_1 = __importDefault(require("./services/otp.service"));
 const user_service_1 = __importDefault(require("./services/user.service"));
 database_config_1.default.sync({ alter: true, force: false })
@@ -41,9 +42,10 @@ otp_service_1.default;
 user_service_1.default;
 app.use("/api/auth", index_1.default);
 app.use("/api", index_2.default);
-app.use("/api/product", index_3.default);
+app.use("/api", index_3.default);
 app.use("/api", index_4.default);
 app.use("/api", index_5.default);
+app.use("/api", index_6.default);
 app.use(errorHandlers_middleware_1.notFound);
 app.use(errorHandlers_middleware_1.errorHandler);
 app.listen(process.env.PORT, () => {

@@ -163,6 +163,25 @@ const schema = {
       count: joi.number().integer().min(1).label("Count"),
     }),
   },
+  User: {
+    update: joi.object({
+      nama: joi
+        .string()
+        .trim()
+        .min(3)
+        .max(50)
+        .label("Name")
+        .regex(/^[a-zA-Z .]+$/i, { invert: false }),
+      oldPassword: joi.string().min(8).max(30).label("oldPassword"),
+      newPassword: joi
+        .string()
+        .min(8)
+        .max(30)
+        .label("newPassword")
+        .when("oldPassword", { is: undefined, then: joi.required() }),
+      image: joi.any().label("Image"),
+    }),
+  },
   Other: {
     cekEmail: joi.object({
       email: joi.string().email().label("Email").required().messages({

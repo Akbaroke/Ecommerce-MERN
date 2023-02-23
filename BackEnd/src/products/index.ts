@@ -10,17 +10,18 @@ import getProducts from "./get/controllers/getProduct.controller";
 import updateProduct from "./update/controllers/updateProduct.controller";
 const route: Router = Router();
 
-route.post("/:idStore", verifyToken, verifyFile, validateSchema(schema.Product.add), addProduct);
-route.get("/:idStore", verifyToken, validateQuery(query.product.get), getProducts);
-route.get("/category/:idStore", verifyToken, getCatagoryProducts);
-route.delete("/", verifyToken, validateQuery(query.product.deleteAndUpdate), deleteProduct);
-route.put(
-  "/",
-  verifyToken,
-  validateQuery(query.product.deleteAndUpdate),
-  verifyFile,
-  validateSchema(schema.Product.update),
-  updateProduct
-);
+route.post("/product/:idStore", verifyToken, verifyFile, validateSchema(schema.Product.add), addProduct);
+route.get("/products/:idStore", verifyToken, validateQuery(query.product.get), getProducts);
+route.get("/products/category/:idStore", verifyToken, getCatagoryProducts);
+route
+  .route("/")
+  .delete(verifyToken, validateQuery(query.product.deleteAndUpdate), deleteProduct)
+  .put(
+    verifyToken,
+    validateQuery(query.product.deleteAndUpdate),
+    verifyFile,
+    validateSchema(schema.Product.update),
+    updateProduct
+  );
 
 export default route;
