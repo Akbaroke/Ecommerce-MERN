@@ -15,10 +15,10 @@ const getProduct_controller_1 = __importDefault(require("./get/controllers/getPr
 const updateProduct_controller_1 = __importDefault(require("./update/controllers/updateProduct.controller"));
 const route = (0, express_1.Router)();
 route.post("/product/:idStore", verifyToken_middleware_1.verifyToken, verifyFile_middleware_1.default, (0, verifySchemas_middleware_1.validateSchema)(verifySchemas_middleware_1.schema.Product.add), add_controller_1.default);
-route.get("/products/:idStore", verifyToken_middleware_1.verifyToken, (0, verifyQuery_middleware_1.validateQuery)(verifyQuery_middleware_1.query.product.get), getProduct_controller_1.default);
+route.get("/products/:idStore", verifyToken_middleware_1.verifyToken, (0, verifyQuery_middleware_1.validateQuery)(verifyQuery_middleware_1.query.get), getProduct_controller_1.default);
 route.get("/products/category/:idStore", verifyToken_middleware_1.verifyToken, getCatagoryProducts_1.default);
 route
     .route("/")
-    .delete(verifyToken_middleware_1.verifyToken, (0, verifyQuery_middleware_1.validateQuery)(verifyQuery_middleware_1.query.product.deleteAndUpdate), deleteProduct_controller_1.default)
-    .put(verifyToken_middleware_1.verifyToken, (0, verifyQuery_middleware_1.validateQuery)(verifyQuery_middleware_1.query.product.deleteAndUpdate), verifyFile_middleware_1.default, (0, verifySchemas_middleware_1.validateSchema)(verifySchemas_middleware_1.schema.Product.update), updateProduct_controller_1.default);
+    .delete(verifyToken_middleware_1.verifyToken, (0, verifyQuery_middleware_1.validateQuery)(verifyQuery_middleware_1.query.isIp), deleteProduct_controller_1.default)
+    .put(verifyToken_middleware_1.verifyToken, (0, verifyQuery_middleware_1.validateQuery)(verifyQuery_middleware_1.query.isIp), verifyFile_middleware_1.default, (0, verifySchemas_middleware_1.validateSchema)(verifySchemas_middleware_1.schema.Product.update), updateProduct_controller_1.default);
 exports.default = route;

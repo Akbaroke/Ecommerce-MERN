@@ -29,22 +29,14 @@ const validateQuery = (schema) => {
 };
 exports.validateQuery = validateQuery;
 const query = {
-    product: {
-        get: joi_1.default.object({
-            limit: joi_1.default.string().optional().label("Label"),
-            page: joi_1.default.string().optional().label("Page"),
-            search: joi_1.default.string().optional().label("Search"),
-        }),
-        deleteAndUpdate: joi_1.default.object({
-            is: joi_1.default.string().required().label("is"),
-            ip: joi_1.default.string().required().label("ip"),
-        }),
-    },
-    cart: {
-        addUpdateAndDelete: joi_1.default.object({
-            is: joi_1.default.string().required().label("is"),
-            ip: joi_1.default.string().required().label("ip"),
-        }),
-    },
+    get: joi_1.default.object({
+        limit: joi_1.default.string().optional().label("Label"),
+        page: joi_1.default.string().optional().label("Page"),
+        search: joi_1.default.string().optional().label("Search"),
+    }),
+    isIp: joi_1.default.object({
+        is: joi_1.default.string().required().label("is"),
+        ip: joi_1.default.string().required().label("ip"),
+    }),
 };
 exports.query = query;

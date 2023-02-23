@@ -15,23 +15,15 @@ const validateQuery = (schema: ObjectSchema) => {
 };
 
 const query = {
-  product: {
-    get: joi.object({
-      limit: joi.string().optional().label("Label"),
-      page: joi.string().optional().label("Page"),
-      search: joi.string().optional().label("Search"),
-    }),
-    deleteAndUpdate: joi.object({
-      is: joi.string().required().label("is"),
-      ip: joi.string().required().label("ip"),
-    }),
-  },
-  cart: {
-    addUpdateAndDelete: joi.object({
-      is: joi.string().required().label("is"),
-      ip: joi.string().required().label("ip"),
-    }),
-  },
+  get: joi.object({
+    limit: joi.string().optional().label("Label"),
+    page: joi.string().optional().label("Page"),
+    search: joi.string().optional().label("Search"),
+  }),
+  isIp: joi.object({
+    is: joi.string().required().label("is"),
+    ip: joi.string().required().label("ip"),
+  }),
 };
 
 export { validateQuery, query };

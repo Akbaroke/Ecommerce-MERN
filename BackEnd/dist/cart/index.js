@@ -15,7 +15,7 @@ const route = (0, express_1.Router)();
 route
     .route("/cart")
     .get(verifyToken_middleware_1.verifyToken, get_controller_1.default)
-    .post(verifyToken_middleware_1.verifyToken, (0, verifyQuery_middleware_1.validateQuery)(verifyQuery_middleware_1.query.cart.addUpdateAndDelete), (0, verifySchemas_middleware_1.validateSchema)(verifySchemas_middleware_1.schema.Cart.addAndUpdate), add_controller_1.default)
-    .put(verifyToken_middleware_1.verifyToken, (0, verifyQuery_middleware_1.validateQuery)(verifyQuery_middleware_1.query.cart.addUpdateAndDelete), (0, verifySchemas_middleware_1.validateSchema)(verifySchemas_middleware_1.schema.Cart.addAndUpdate), update_controller_1.default)
-    .delete(verifyToken_middleware_1.verifyToken, (0, verifyQuery_middleware_1.validateQuery)(verifyQuery_middleware_1.query.cart.addUpdateAndDelete), delete_controller_1.default);
+    .post(verifyToken_middleware_1.verifyToken, (0, verifyQuery_middleware_1.validateQuery)(verifyQuery_middleware_1.query.isIp), (0, verifySchemas_middleware_1.validateSchema)(verifySchemas_middleware_1.schema.Cart.addAndUpdate), add_controller_1.default)
+    .put(verifyToken_middleware_1.verifyToken, (0, verifyQuery_middleware_1.validateQuery)(verifyQuery_middleware_1.query.isIp), (0, verifySchemas_middleware_1.validateSchema)(verifySchemas_middleware_1.schema.Cart.addAndUpdate), update_controller_1.default)
+    .delete(verifyToken_middleware_1.verifyToken, (0, verifyQuery_middleware_1.validateQuery)(verifyQuery_middleware_1.query.isIp), delete_controller_1.default);
 exports.default = route;
