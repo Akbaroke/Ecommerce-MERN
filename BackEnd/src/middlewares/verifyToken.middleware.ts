@@ -26,8 +26,8 @@ const verifyToken = async (req: Request, res: Response, next: NextFunction): Pro
 const verifyTokenAndAuthorization = (req: Request, res: Response, next: NextFunction): any => {
   try {
     verifyToken(req, res, () => {
-      const { id, role } = req.USER;
-      if (role === "admin" || id === req.params.id) return next();
+      const { userId, role } = req.USER;
+      if (role === "admin" || userId === req.params.userId) return next();
       res.status(403).json({
         success: false,
         message: "You are not alowed to do that",

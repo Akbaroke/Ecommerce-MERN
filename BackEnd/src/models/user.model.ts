@@ -3,12 +3,14 @@ import db from "../configs/database.config";
 import bcrypt from "bcrypt";
 import { STATUS, ROLE } from "../types/default";
 import Token from "./token.model";
+import Image from "./image.model";
 
 export interface IUserModel {
   id: string;
   nama: string;
   email: string;
   password: string;
+  idImage?: string | null;
   status?: STATUS;
   role?: ROLE;
   tokenId?: string;
@@ -23,6 +25,7 @@ class User extends Model<IUserModel> {
   password?: string;
   status?: STATUS;
   role?: ROLE;
+  image?: any;
   tokenId?: string;
   createdAt?: Number;
   updatedAt?: Number;
@@ -59,6 +62,10 @@ User.init(
       type: DataTypes.ENUM("admin", "user"),
       defaultValue: "user",
       allowNull: false,
+    },
+    idImage: {
+      type: DataTypes.STRING,
+      allowNull: true,
     },
     tokenId: {
       type: DataTypes.STRING,
@@ -108,5 +115,7 @@ User.prototype.comparePassword = async function (candidatePassword: string): Pro
 
 Token.hasOne(User, { foreignKey: "tokenId" });
 User.belongsTo(Token, { as: "token", foreignKey: "tokenId" });
+Image.hasOne(User, { foreignKey: "idImage" });
+User.belongsTo(Image, { as: "image", foreignKey: "idImage" });
 
 export default User;

@@ -16,6 +16,7 @@ const sequelize_1 = require("sequelize");
 const database_config_1 = __importDefault(require("../configs/database.config"));
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const token_model_1 = __importDefault(require("./token.model"));
+const image_model_1 = __importDefault(require("./image.model"));
 class User extends sequelize_1.Model {
 }
 User.init({
@@ -46,6 +47,10 @@ User.init({
         type: sequelize_1.DataTypes.ENUM("admin", "user"),
         defaultValue: "user",
         allowNull: false,
+    },
+    idImage: {
+        type: sequelize_1.DataTypes.STRING,
+        allowNull: true,
     },
     tokenId: {
         type: sequelize_1.DataTypes.STRING,
@@ -93,4 +98,6 @@ User.prototype.comparePassword = function (candidatePassword) {
 };
 token_model_1.default.hasOne(User, { foreignKey: "tokenId" });
 User.belongsTo(token_model_1.default, { as: "token", foreignKey: "tokenId" });
+image_model_1.default.hasOne(User, { foreignKey: "idImage" });
+User.belongsTo(image_model_1.default, { as: "image", foreignKey: "idImage" });
 exports.default = User;
