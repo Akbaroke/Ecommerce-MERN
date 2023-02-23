@@ -23,6 +23,7 @@ const validateSchema = (schema) => {
         }
         catch (error) {
             logger_log_1.default.error(error.message);
+            console.log(error);
             next(error);
         }
     });

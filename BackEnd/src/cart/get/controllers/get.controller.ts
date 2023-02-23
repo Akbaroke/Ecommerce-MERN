@@ -9,10 +9,11 @@ const get = async (req: Request, res: Response, next: NextFunction): Promise<any
   let page = Number.isNaN(Number(req.query.page)) ? 1 : Number(req.query.page);
   let start = (page - 1) * limit;
   let end = page * limit;
+  const { idStore } = req.params;
   const { userId } = req.USER;
   try {
     await Cart.findAll({
-      where: { userId },
+      where: { userId, idStore },
       attributes: ["count", "idStore", "idProduct"],
       order: [["updatedAt", "ASC"]],
       limit: limit,
@@ -22,7 +23,7 @@ const get = async (req: Request, res: Response, next: NextFunction): Promise<any
         for (const value of values) {
           const product = await Product.findOne({
             where: {
-              idStore: value.getDataValue("idStore"),
+              idStore,
               idProduct: value.getDataValue("idProduct"),
             },
             attributes: ["discount", "price"],
@@ -31,7 +32,7 @@ const get = async (req: Request, res: Response, next: NextFunction): Promise<any
           if (!product) {
             await Cart.destroy({
               where: {
-                idStore: value.getDataValue("idStore"),
+                idStore,
                 idProduct: value.getDataValue("idProduct"),
                 userId,
               },
@@ -55,7 +56,7 @@ const get = async (req: Request, res: Response, next: NextFunction): Promise<any
               },
               {
                 where: {
-                  idStore: value.getDataValue("idStore"),
+                  idStore,
                   idProduct: value.getDataValue("idProduct"),
                   userId,
                 },
@@ -66,7 +67,7 @@ const get = async (req: Request, res: Response, next: NextFunction): Promise<any
       })
       .then(async () => {
         const cart = await Cart.findAndCountAll({
-          where: { userId },
+          where: { userId, idStore },
           attributes: ["count", "price", "totalPrice"],
           include: [
             {

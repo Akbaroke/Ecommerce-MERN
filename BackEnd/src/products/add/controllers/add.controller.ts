@@ -34,15 +34,6 @@ const addProduct = async (req: Request, res: Response, next: NextFunction): Prom
         await cloud.uploader.destroy(public_id);
         throw new Error(error);
       });
-    // await cloud.api
-    //   .delete_resources_by_prefix(`project/${findUserInStores.getDataValue("idStore") as string}`)
-    //   .then(async () => {
-    //     await cloud.api.delete_folder(`project/${findUserInStores.getDataValue("idStore") as string}`);
-    //   })
-    //   .catch(error => {
-    //     console.log(error);
-    //     throw new Error(error);
-    //   });
     res.status(200).json({ success: true, data: { message: "success" } });
   } catch (error) {
     console.log(error);

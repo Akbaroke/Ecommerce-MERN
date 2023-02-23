@@ -30,9 +30,9 @@ const validateQuery = (schema) => {
 exports.validateQuery = validateQuery;
 const query = {
     get: joi_1.default.object({
-        limit: joi_1.default.string().optional().label("Label"),
-        page: joi_1.default.string().optional().label("Page"),
-        search: joi_1.default.string().optional().label("Search"),
+        limit: joi_1.default.number().integer().min(0).max(10).label("Label"),
+        page: joi_1.default.string().label("Page"),
+        search: joi_1.default.string().label("Search"),
     }),
     isIp: joi_1.default.object({
         is: joi_1.default.string().required().label("is"),

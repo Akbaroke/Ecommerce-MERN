@@ -12,11 +12,6 @@ const deleteStore = async (req: Request, res: Response, next: NextFunction): Pro
   const { userId } = req.USER;
   const t = await db.transaction();
   try {
-    // const findStore = await Store.findOne({ where: { idStore } });
-    // if (!findStore) return res.status(404).json({ success: false, error: { message: "store not found" } });
-    // const access = Array.from(JSON.parse(findStore.access)).filter(
-    //   (x: any, _v) => x.userId == userId && x.role == "owner"
-    // );
     if (!(await checkAccessUserInStoreAsOwner(userId, idStore as string)))
       return res.status(403).json({ success: false, error: { message: "You are not alowed to do that" } });
 

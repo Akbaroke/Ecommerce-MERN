@@ -30,7 +30,8 @@ const updateStore = (req, res, next) => __awaiter(void 0, void 0, void 0, functi
                 },
                 attributes: ["idImage"],
                 include: [{ model: image_model_1.default, as: "image", attributes: ["idCloud"] }],
-            }).then((value) => __awaiter(void 0, void 0, void 0, function* () {
+            })
+                .then((value) => __awaiter(void 0, void 0, void 0, function* () {
                 const { secure_url, public_id } = yield cloud_config_1.default.uploader.upload(image === null || image === void 0 ? void 0 : image.path, {
                     public_id: value === null || value === void 0 ? void 0 : value.image.idCloud,
                 });
@@ -39,7 +40,10 @@ const updateStore = (req, res, next) => __awaiter(void 0, void 0, void 0, functi
                         idImage: value === null || value === void 0 ? void 0 : value.getDataValue("idImage"),
                     },
                 });
-            }));
+            }))
+                .catch(error => {
+                throw new Error(error);
+            });
         }
         yield store_model_1.default.update({
             nameStore,
