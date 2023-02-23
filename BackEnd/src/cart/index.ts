@@ -9,9 +9,9 @@ import update from "./update/controllers/update.controller";
 
 const route: Router = Router();
 
+route.get("/cart/:idStore", verifyToken, validateQuery(query.get), get);
 route
   .route("/cart")
-  .get(verifyToken, get)
   .post(verifyToken, validateQuery(query.isIp), validateSchema(schema.Cart.addAndUpdate), add)
   .put(verifyToken, validateQuery(query.isIp), validateSchema(schema.Cart.addAndUpdate), update)
   .delete(verifyToken, validateQuery(query.isIp), deleteCart);

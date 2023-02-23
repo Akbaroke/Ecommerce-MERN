@@ -9,6 +9,7 @@ const validateSchema = (schema: ObjectSchema) => {
       next();
     } catch (error: any) {
       logger.error(error.message);
+      console.log(error);
       next(error);
     }
   };
