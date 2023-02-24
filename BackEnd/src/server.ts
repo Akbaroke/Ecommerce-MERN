@@ -26,7 +26,7 @@ db.sync({ alter: true, force: false })
 
 const app: Application = express();
 
-if (process.env.NODE_ENV) app.set("trust proxy", 1);
+if (process.env.NODE_ENV === "production") app.set("trust proxy", 1);
 if (process.env.NODE_ENV === "development") app.use(morgan("dev"));
 
 app.use(express.json());
