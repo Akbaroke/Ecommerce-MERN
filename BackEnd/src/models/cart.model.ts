@@ -7,17 +7,17 @@ export interface ICartModel {
   userId: string;
   idStore: string;
   idProduct: string;
-  count: Number;
-  price: Number;
-  totalPrice: Number;
-  createdAt?: Number;
-  updatedAt?: Number;
+  count: number;
+  price: number;
+  totalPrice: number;
+  createdAt?: number;
+  updatedAt?: number;
 }
 
 class Cart extends Model<ICartModel> {
-  createdAt?: Number;
-  updatedAt?: Number;
-  product?: any;
+  createdAt?: number;
+  updatedAt?: number;
+  product?: Product;
 }
 
 Cart.init(

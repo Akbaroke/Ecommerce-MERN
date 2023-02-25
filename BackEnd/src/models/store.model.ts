@@ -7,19 +7,19 @@ export interface IStoreModel {
   nameStore: string;
   idImage?: string | null;
   access?: any;
-  tax?: Number;
-  discount?: Number;
-  income?: Number;
-  createdAt?: Number;
-  updatedAt?: Number;
+  tax?: number;
+  discount?: number;
+  income?: number;
+  createdAt?: number;
+  updatedAt?: number;
 }
 
 class Store extends Model<IStoreModel> {
   nameStore?: string;
   access?: any;
-  createdAt?: Number;
-  updatedAt?: Number;
-  image?: any;
+  createdAt?: number;
+  updatedAt?: number;
+  image?: Image;
 }
 
 Store.init(

@@ -1,21 +1,21 @@
-import { Request, Response, NextFunction } from "express";
+import { type Request, type Response, type NextFunction } from "express";
 import { Op } from "sequelize";
 import Store from "@model/store.model";
 import Image from "@model/image.model";
-import { RSTORE } from "@tp/default";
+import { type RSTORE } from "@tp/default";
 import generateId from "@util/generateOtp.util";
 import cloud from "@config/cloud.config";
-import hashids from "hashids";
+import Hashids from "hashids";
 
 const createStore = async (req: Request, res: Response, next: NextFunction): Promise<any> => {
   const { nameStore, image } = req.body;
   const { userId } = req.USER;
-  const hash = new hashids(process.env.SALTHASHIDS as string, 16);
+  const hash = new Hashids(process.env.SALTHASHIDS as string, 16);
   try {
     const store = await Store.count({
       where: {
         access: {
-          [Op.like]: `%${userId}%`,
+          [Op.like]: `%${userId as string}%`,
         },
       },
     });
@@ -30,7 +30,7 @@ const createStore = async (req: Request, res: Response, next: NextFunction): Pro
           idStore: hash.encode(id),
         },
       });
-      if (!checkId) {
+      if (checkId == null) {
         valid = false;
       } else {
         id = await generateId(4);
@@ -43,7 +43,7 @@ const createStore = async (req: Request, res: Response, next: NextFunction): Pro
     });
     await Image.create({
       idCloud: public_id,
-      secure_url: secure_url,
+      secure_url,
     })
       .then(async (x: any) => {
         await Store.create({

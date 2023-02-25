@@ -7,21 +7,21 @@ export interface IProductModel {
   idProduct?: string;
   idStore: string;
   nameProduct: string;
-  price: Number;
-  discount?: Number;
-  stock: Number;
+  price: number;
+  discount?: number;
+  stock: number;
   category: string;
   detail: string;
   idImage: string;
-  createdAt?: Number;
-  updatedAt?: Number;
+  createdAt?: number;
+  updatedAt?: number;
 }
 
 class Product extends Model<IProductModel> {
-  createdAt?: Number;
-  updatedAt?: Number;
-  image?: any;
-  store?: any;
+  createdAt?: number;
+  updatedAt?: number;
+  image?: Image;
+  store?: Store;
 }
 
 Product.init(

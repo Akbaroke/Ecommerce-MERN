@@ -1,7 +1,7 @@
 import { Model, DataTypes } from "sequelize";
 import db from "../configs/database.config";
 import bcrypt from "bcrypt";
-import { STATUS, ROLE } from "../types/default";
+import { type STATUS, type ROLE } from "../types/default";
 import Token from "./token.model";
 import Image from "./image.model";
 
@@ -14,9 +14,9 @@ export interface IUserModel {
   status?: STATUS;
   role?: ROLE;
   tokenId?: string;
-  createdAt?: Number;
-  updatedAt?: Number;
-  expiredAt?: Number | null;
+  createdAt?: number;
+  updatedAt?: number;
+  expiredAt?: number | null;
 }
 
 class User extends Model<IUserModel> {
@@ -25,12 +25,12 @@ class User extends Model<IUserModel> {
   password?: string;
   status?: STATUS;
   role?: ROLE;
-  image?: any;
+  image?: Image;
   tokenId?: string;
-  createdAt?: Number;
-  updatedAt?: Number;
-  expiredAt?: Number | null;
-  comparePassword?: (candidatePassword: string) => Promise<Boolean>;
+  createdAt?: number;
+  updatedAt?: number;
+  expiredAt?: number | null;
+  comparePassword?: (candidatePassword: string) => Promise<boolean>;
 }
 
 User.init(
@@ -90,14 +90,14 @@ User.init(
       beforeCreate: async user => {
         const time = new Date(new Date().setHours(new Date().getHours() + 24));
         const createdAtAndUpdatedAt = new Date().getTime();
-        String(user.status) == "active" ? (user.expiredAt = undefined) : (user.expiredAt = Number(time.getTime()));
+        String(user.status) === "active" ? (user.expiredAt = undefined) : (user.expiredAt = Number(time.getTime()));
         user.createdAt = Number(createdAtAndUpdatedAt);
         user.updatedAt = Number(createdAtAndUpdatedAt);
       },
       beforeSave: async user => {
         if (user.changed("password")) {
           const salt = await bcrypt.genSalt(Number(process.env.SALT));
-          const hashPassword = await bcrypt.hash(user.getDataValue("password") as string, salt);
+          const hashPassword = await bcrypt.hash(user.getDataValue("password"), salt);
           user.password = hashPassword;
         }
       },
@@ -109,8 +109,8 @@ User.init(
   }
 );
 
-User.prototype.comparePassword = async function (candidatePassword: string): Promise<Boolean> {
-  return await bcrypt.compare(candidatePassword as string, this.getDataValue("password") as string).catch(() => false);
+User.prototype.comparePassword = async function (candidatePassword: string): Promise<boolean> {
+  return await bcrypt.compare(candidatePassword, this.getDataValue("password")).catch(() => false);
 };
 
 Token.hasOne(User, { foreignKey: "tokenId" });

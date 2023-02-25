@@ -1,7 +1,7 @@
-import { Request, Response, NextFunction } from "express";
+import { type Request, type Response, type NextFunction } from "express";
 import Otp from "@model/otp.model";
 import User from "@model/user.model";
-import { STATUS, TYPE } from "@tp/default";
+import { type STATUS, type TYPE } from "@tp/default";
 import generateOTP from "@util/generateOtp.util";
 import { sendEmail } from "@util/sendEmail.util";
 
@@ -12,7 +12,7 @@ const takeTheOtp = async (req: Request, res: Response, next: NextFunction): Prom
       attributes: ["nama"],
       where: { email, status: "pending" as unknown as STATUS },
     });
-    if (!user) {
+    if (user == null) {
       return res.status(400).json({ success: false, error: { message: "user not found" } });
     }
 
@@ -21,11 +21,11 @@ const takeTheOtp = async (req: Request, res: Response, next: NextFunction): Prom
     });
 
     const createOtp = await generateOTP(4);
-    const valid: Boolean = await sendEmail(email as string, createOtp as string);
+    const valid: boolean = await sendEmail(email as string, createOtp as string);
     if (!valid) {
       throw new Error("failed to send email");
     }
-    if (!otp) {
+    if (otp == null) {
       await Otp.create({
         email,
         type: type as unknown as TYPE,

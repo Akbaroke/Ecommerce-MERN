@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from "express";
+import { type Request, type Response, type NextFunction } from "express";
 import Store from "@model/store.model";
 import Product from "@model/product.model";
 import cloud from "@config/cloud.config";
@@ -12,7 +12,7 @@ const deleteStore = async (req: Request, res: Response, next: NextFunction): Pro
   const { userId } = req.USER;
   const t = await db.transaction();
   try {
-    if (!(await checkAccessUserInStoreAsOwner(userId, idStore as string)))
+    if (!(await checkAccessUserInStoreAsOwner(userId, idStore)))
       return res.status(403).json({ success: false, error: { message: "You are not alowed to do that" } });
 
     await Store.destroy({ where: { idStore }, transaction: t })
@@ -34,26 +34,27 @@ const deleteStore = async (req: Request, res: Response, next: NextFunction): Pro
           transaction: t,
         });
       })
-      .catch(error => {
-        t.rollback();
+      .catch(async error => {
+        await t.rollback();
         throw new Error(error);
       });
 
-    await cloud.api.delete_resources_by_prefix(`project/${idStore}`).catch(() => {
-      t.rollback();
+    await cloud.api.delete_resources_by_prefix(`project/${idStore}`).catch(async () => {
+      await t.rollback();
       throw new Error("error");
     });
 
-    t.commit();
+    await t.commit();
   } catch (error) {
-    return next(error);
+    next(error);
+    return;
   }
 
   try {
     await cloud.api.delete_folder(`project/${idStore}`);
     res.status(200).json({ success: true, data: { message: "success" } });
   } catch (error) {
-    return next(error);
+    next(error);
   }
 };
 

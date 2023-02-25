@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from "express";
+import { type Request, type Response, type NextFunction } from "express";
 import Product from "@model/product.model";
 import Image from "@model/image.model";
 import cloud from "@config/cloud.config";
@@ -19,7 +19,7 @@ const deleteProduct = async (req: Request, res: Response, next: NextFunction): P
       },
       include: [{ model: Image, as: "image", attributes: ["idCloud"] }],
     });
-    if (!product) return res.status(404).json({ success: false, error: { message: "product not found" } });
+    if (product == null) return res.status(404).json({ success: false, error: { message: "product not found" } });
     await Image.destroy({
       where: {
         idImage: product.getDataValue("idImage"),
@@ -34,18 +34,14 @@ const deleteProduct = async (req: Request, res: Response, next: NextFunction): P
           },
           transaction: t,
         });
+        await cloud.uploader.destroy(product?.image?.getDataValue("idCloud") as string);
+        await t.commit();
+        return res.status(200).json({ success: true, data: { message: "success" } });
       })
-      .catch(error => {
-        t.rollback();
+      .catch(async error => {
+        await t.rollback();
         throw new Error(error);
       });
-
-    await cloud.uploader.destroy(product.image.idCloud).catch(error => {
-      t.rollback();
-      throw new Error(error);
-    });
-    t.commit();
-    res.status(200).json({ success: true, data: { message: "success" } });
   } catch (error) {
     next(error);
   }

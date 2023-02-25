@@ -1,4 +1,4 @@
-import { NextFunction, Request, Response } from "express";
+import { type NextFunction, type Request, type Response } from "express";
 import Cart from "@model/cart.model";
 import Product from "@model/product.model";
 import { Op } from "sequelize";
@@ -27,18 +27,20 @@ const add = async (req: Request, res: Response, next: NextFunction): Promise<any
       attributes: ["stock", "discount", "price"],
       include: [{ model: Store, as: "store", attributes: ["discount"] }],
     });
-    if (!product) return res.status(404).json({ success: false, error: { message: "Product not found" } });
+    if (product == null) return res.status(404).json({ success: false, error: { message: "Product not found" } });
     if (count > product.getDataValue("stock"))
       return res
         .status(400)
         .json({ success: false, error: { message: `remaining stock ${product.getDataValue("stock")}` } });
-    let price: Number =
-      product.getDataValue("discount") != 0
+    let price: number =
+      product.getDataValue("discount") !== 0
         ? Number(product.getDataValue("price")) * (Number(product.getDataValue("discount")) / 100)
         : product.getDataValue("price");
 
     price =
-      product.store?.discount == 0 ? price : Number(price) - Number(price) * (Number(product.store?.discount) / 100);
+      product.store?.getDataValue("discount") === 0
+        ? price
+        : Number(price) - Number(price) * (Number(product.store?.getDataValue("discount")) / 100);
     await Cart.create({
       userId,
       idProduct: ip as string,
@@ -60,7 +62,7 @@ const add = async (req: Request, res: Response, next: NextFunction): Promise<any
             },
           ],
         });
-        res.status(200).json({ success: true, data: { cart } });
+        return res.status(200).json({ success: true, data: { cart } });
       })
       .catch(error => {
         throw new Error(error);

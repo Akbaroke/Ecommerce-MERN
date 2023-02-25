@@ -1,7 +1,7 @@
-import { Request, Response, NextFunction } from "express";
+import { type Request, type Response, type NextFunction } from "express";
 import Otp from "@model/otp.model";
 import User from "@model/user.model";
-import { TYPE } from "@tp/default";
+import { type TYPE } from "@tp/default";
 
 const checkLimitBeforeTakeTheOtp = async (req: Request, res: Response, next: NextFunction): Promise<any> => {
   const { ip, email, type } = req.body;
@@ -13,10 +13,10 @@ const checkLimitBeforeTakeTheOtp = async (req: Request, res: Response, next: Nex
       attributes: ["nama", "expiredAt"],
       where: { email },
     });
-    if (!user || (!findOtp && user.getDataValue("expiredAt") === null))
+    if (user == null || (findOtp == null && user.getDataValue("expiredAt") === null))
       return res.status(400).json({ success: false, error: { message: "user not found" } });
 
-    if (!findOtp) {
+    if (findOtp == null) {
       return res.status(200).json({
         success: false,
         data: {
@@ -25,13 +25,13 @@ const checkLimitBeforeTakeTheOtp = async (req: Request, res: Response, next: Nex
         },
       });
     }
-    if (Number(new Date().getTime()) - Number(findOtp?.updatedAt) < 60000) {
+    if (Number(new Date().getTime()) - Number(findOtp?.getDataValue("updatedAt")) < 60000) {
       throw new Error("wait a minute");
     }
 
     res.status(200).json({
       success: true,
-      data: { time: findOtp?.updatedAt, message: ">1" },
+      data: { time: findOtp?.getDataValue("updatedAt"), message: ">1" },
     });
   } catch (error) {
     next(error);

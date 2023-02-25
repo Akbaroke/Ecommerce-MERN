@@ -1,14 +1,14 @@
-import { Request, Response, NextFunction } from "express";
+import { type Request, type Response, type NextFunction } from "express";
 import Cart from "@model/cart.model";
 import Image from "@model/image.model";
 import Product from "@model/product.model";
 import Store from "@model/store.model";
 
 const get = async (req: Request, res: Response, next: NextFunction): Promise<any> => {
-  let limit = Number.isNaN(Number(req.query.limit)) ? 10 : Number(req.query.limit);
-  let page = Number.isNaN(Number(req.query.page)) ? 1 : Number(req.query.page);
-  let start = (page - 1) * limit;
-  let end = page * limit;
+  const limit = Number.isNaN(Number(req.query.limit)) ? 10 : Number(req.query.limit);
+  const page = Number.isNaN(Number(req.query.page)) ? 1 : Number(req.query.page);
+  const start = (page - 1) * limit;
+  const end = page * limit;
   const { idStore } = req.params;
   const { userId } = req.USER;
   try {
@@ -16,7 +16,7 @@ const get = async (req: Request, res: Response, next: NextFunction): Promise<any
       where: { userId, idStore },
       attributes: ["count", "idStore", "idProduct"],
       order: [["updatedAt", "ASC"]],
-      limit: limit,
+      limit,
       offset: start,
     })
       .then(async values => {
@@ -29,7 +29,7 @@ const get = async (req: Request, res: Response, next: NextFunction): Promise<any
             attributes: ["discount", "price"],
             include: [{ model: Store, as: "store", attributes: ["discount"] }],
           });
-          if (!product) {
+          if (product === null) {
             await Cart.destroy({
               where: {
                 idStore,
@@ -40,13 +40,15 @@ const get = async (req: Request, res: Response, next: NextFunction): Promise<any
             return;
           } else {
             let price =
-              Number(product?.getDataValue("discount")) == 0
+              Number(product?.getDataValue("discount")) === 0
                 ? Number(product?.getDataValue("price"))
                 : Number(product?.getDataValue("price")) -
                   Number(product?.getDataValue("price")) * (Number(product?.getDataValue("discount")) / 100);
 
             price =
-              Number(product.store?.discount) == 0 ? price : price - price * (Number(product.store?.discount) / 100);
+              Number(product.store?.getDataValue("discount")) === 0
+                ? price
+                : price - price * (Number(product.store?.getDataValue("discount")) / 100);
 
             await Cart.update(
               {
@@ -64,6 +66,7 @@ const get = async (req: Request, res: Response, next: NextFunction): Promise<any
             );
           }
         }
+        return values;
       })
       .then(async () => {
         const cart = await Cart.findAndCountAll({
@@ -78,11 +81,11 @@ const get = async (req: Request, res: Response, next: NextFunction): Promise<any
             },
           ],
           order: [["updatedAt", "ASC"]],
-          limit: limit,
+          limit,
           offset: start,
         });
-        let count = cart.count;
-        let pagination = {};
+        const count = cart.count;
+        const pagination = {};
         Object.assign(pagination, { totalRow: cart.count, totalPage: Math.ceil(count / limit) });
         if (end < count) {
           Object.assign(pagination, { next: { page: page + 1, limit, remaining: count - (start + limit) } });
@@ -93,7 +96,7 @@ const get = async (req: Request, res: Response, next: NextFunction): Promise<any
         if (page > Math.ceil(count / limit)) {
           Object.assign(pagination, { prev: { remaining: count } });
         }
-        res.status(200).json({ success: true, pagination, data: cart });
+        return res.status(200).json({ success: true, pagination, data: cart });
       })
       .catch(error => {
         throw new Error(error);

@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from "express";
+import { type Request, type Response, type NextFunction } from "express";
 import Cart from "@model/cart.model";
 import Product from "@model/product.model";
 
@@ -17,8 +17,11 @@ const update = async (req: Request, res: Response, next: NextFunction) => {
       include: [{ model: Product, as: "product", attributes: ["nameProduct", "stock"] }],
     })
       .then(async value => {
-        if (count > value?.product.stock) {
-          res.status(400).json({ success: false, error: { message: `remaining stock ${value?.product?.stock}` } });
+        if (count > Number(value?.product?.getDataValue("stock"))) {
+          return res.status(400).json({
+            success: false,
+            error: { message: `remaining stock ${Number(value?.product?.getDataValue("stock"))}` },
+          });
         } else {
           await Cart.update(
             {
@@ -34,7 +37,7 @@ const update = async (req: Request, res: Response, next: NextFunction) => {
               },
             }
           );
-          res.status(200).json({ success: true, data: { message: "success" } });
+          return res.status(200).json({ success: true, data: { message: "success" } });
         }
       })
       .catch(error => {

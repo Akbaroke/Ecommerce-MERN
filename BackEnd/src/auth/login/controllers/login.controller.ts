@@ -1,8 +1,8 @@
-import { Request, Response, NextFunction } from "express";
+import { type Request, type Response, type NextFunction } from "express";
 import Otp from "@model/otp.model";
 import Token from "@model/token.model";
 import User from "@model/user.model";
-import { STATUS } from "@tp/default";
+import { type STATUS } from "@tp/default";
 import { generateToken } from "@util/generateToken.util";
 
 const login = async (req: Request, res: Response, next: NextFunction): Promise<any> => {
@@ -14,7 +14,7 @@ const login = async (req: Request, res: Response, next: NextFunction): Promise<a
         email,
       },
     });
-    if (!findUser) return res.status(400).json({ success: false, error: { message: "user not found" } });
+    if (findUser === null) return res.status(400).json({ success: false, error: { message: "user not found" } });
 
     if (findUser.status !== ("active" as unknown as STATUS)) {
       if (Number(findUser.getDataValue("expiredAt")) < Number(new Date().getTime())) {
@@ -34,7 +34,7 @@ const login = async (req: Request, res: Response, next: NextFunction): Promise<a
     }
 
     const valid = await findUser.comparePassword?.(password as string);
-    if (!valid) return res.status(401).json({ success: false, error: { message: "password invalid" } });
+    if (valid === false) return res.status(401).json({ success: false, error: { message: "password invalid" } });
 
     const { accessToken, refreshToken } = await generateToken(
       findUser.getDataValue("id"),

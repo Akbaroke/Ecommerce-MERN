@@ -7,7 +7,7 @@ const logger = createLogger({
     format.timestamp(),
     format.ms(),
     format.printf(({ timestamp, message, level, ms }) => {
-      return `[${timestamp}] - ${ms} ${level}: ${message} `;
+      return `[${timestamp as string}] - ${ms as string} ${level}: ${message as string} `;
     })
   ),
 });

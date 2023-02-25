@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from "express";
+import { type Request, type Response, type NextFunction } from "express";
 import Store from "@model/store.model";
 import { Op } from "sequelize";
 import Image from "@model/image.model";
@@ -8,12 +8,12 @@ const getStores = async (req: Request, res: Response, next: NextFunction): Promi
   const { userId } = req.USER;
   try {
     const stores = await Store.findAll({
-      where: { access: { [Op.like]: `%${userId}%` } },
+      where: { access: { [Op.like]: `%${userId as string}%` } },
       attributes: ["idStore", "nameStore", "access"],
       include: [{ model: Image, as: "image", attributes: ["secure_url"] }],
     });
 
-    let data: any[] = [];
+    const data: any[] = [];
     stores.forEach((x, _i) => {
       const coba: any[] = Array.from(JSON.parse(x.access));
       const filter = coba.filter((v, _i) => v.userId === userId);
@@ -21,7 +21,7 @@ const getStores = async (req: Request, res: Response, next: NextFunction): Promi
         idStore: x.getDataValue("idStore"),
         nameStore: x.getDataValue("nameStore"),
         role: filter[0].role,
-        image: x.image?.secure_url,
+        image: x.image?.getDataValue("secure_url"),
       });
     });
 

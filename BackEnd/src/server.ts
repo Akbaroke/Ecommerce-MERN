@@ -1,4 +1,4 @@
-import express, { Application } from "express";
+import express, { type Application } from "express";
 import morgan from "morgan";
 import cors from "cors";
 import logger from "./logs/logger.log";
@@ -51,5 +51,5 @@ app.use(notFound);
 app.use(errorHandler);
 
 app.listen(process.env.PORT as string, () => {
-  logger.info(`Listen at port ${process.env.PORT} (${process.env.NODE_ENV})`);
+  logger.info(`Listen at port ${process.env.PORT as string} (${process.env.NODE_ENV as string})`);
 });

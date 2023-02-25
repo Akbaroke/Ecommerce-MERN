@@ -1,5 +1,5 @@
-const generateNumber = (num?: Number): any => {
-  let len = num ?? 6;
+const generateNumber = (num?: number): any => {
+  const len = num ?? 6;
   let str = "";
   const digits = "0123456789";
   for (let i = 0; i < Number(len); i++) {
