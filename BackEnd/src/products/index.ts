@@ -14,7 +14,7 @@ route.post("/product/:idStore", verifyToken, verifyFile, validateSchema(schema.P
 route.get("/products/:idStore", verifyToken, validateQuery(query.get), getProducts);
 route.get("/products/category/:idStore", verifyToken, getCatagoryProducts);
 route
-  .route("/")
+  .route("/product")
   .delete(verifyToken, validateQuery(query.isIp), deleteProduct)
   .put(verifyToken, validateQuery(query.isIp), verifyFile, validateSchema(schema.Product.update), updateProduct);
 

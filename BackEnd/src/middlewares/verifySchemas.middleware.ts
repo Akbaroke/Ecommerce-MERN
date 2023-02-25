@@ -1,5 +1,5 @@
-import joi, { ObjectSchema } from "joi";
-import { Request, Response, NextFunction } from "express";
+import joi, { type ObjectSchema } from "joi";
+import { type Request, type Response, type NextFunction } from "express";
 import logger from "../logs/logger.log";
 
 const validateSchema = (schema: ObjectSchema) => {
@@ -9,7 +9,6 @@ const validateSchema = (schema: ObjectSchema) => {
       next();
     } catch (error: any) {
       logger.error(error.message);
-      console.log(error);
       next(error);
     }
   };
@@ -97,8 +96,8 @@ const schema = {
         .trim()
         .regex(/^[\w\s]+$/)
         .label("Name store"),
-      discount: joi.number().integer().min(0).max(100).label("Discount"),
-      tax: joi.number().integer().min(0).label("Tax"),
+      discount: joi.number().strict().integer().min(0).max(100).label("Discount"),
+      tax: joi.number().strict().integer().min(0).max(100).label("Tax"),
       image: joi.any().label("Image"),
     }),
     addC: joi.object({
@@ -124,11 +123,11 @@ const schema = {
           "string.min": `{{#label}} should have a minimum length of {#limit}`,
           "any.required": `{{#label}} is a required field`,
         }),
-      price: joi.number().integer().label("Price").required().min(0).messages({
+      price: joi.number().strict().integer().label("Price").required().min(0).messages({
         "any.required": `{{#label}} is a required field`,
       }),
-      discount: joi.number().integer().min(0).max(100).optional().label("Discount"),
-      stock: joi.number().integer().min(0).required().label("Stock").messages({
+      discount: joi.number().strict().integer().min(0).max(100).optional().label("Discount"),
+      stock: joi.number().strict().integer().min(0).required().label("Stock").messages({
         "any.required": `{{#label}} is a required field`,
       }),
       category: joi.string().trim().required().label("Category").messages({
@@ -151,17 +150,20 @@ const schema = {
           "string.empty": `{{#label}} cannot be an empty field`,
           "string.min": `{{#label}} should have a minimum length of {#limit}`,
         }),
-      price: joi.number().integer().label("Price").min(0),
-      discount: joi.number().integer().min(0).max(100).label("Discount"),
-      stock: joi.number().integer().min(0).label("Stock"),
+      price: joi.number().strict().integer().label("Price").min(0),
+      discount: joi.number().strict().integer().min(0).max(100).label("Discount"),
+      stock: joi.number().strict().integer().min(0).label("Stock"),
       category: joi.string().trim().label("Category"),
       detail: joi.string().label("Detail"),
       image: joi.any().label("Image"),
     }),
   },
   Cart: {
-    addAndUpdate: joi.object({
-      count: joi.number().integer().min(1).label("Count"),
+    add: joi.object({
+      count: joi.number().strict().integer().min(1).label("Count"),
+    }),
+    update: joi.object({
+      count: joi.number().strict().integer().min(1).required().label("Count"),
     }),
   },
   User: {

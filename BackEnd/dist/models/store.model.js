@@ -27,11 +27,11 @@ Store.init({
         allowNull: true,
     },
     tax: {
-        type: sequelize_1.DataTypes.BIGINT,
+        type: sequelize_1.DataTypes.INTEGER,
         allowNull: true,
     },
     discount: {
-        type: sequelize_1.DataTypes.BIGINT,
+        type: sequelize_1.DataTypes.INTEGER,
         allowNull: true,
     },
     income: {

@@ -1,10 +1,16 @@
 import upload from "@config/multer.config";
-import { Request, Response, NextFunction } from "express";
+import { type Request, type Response, type NextFunction } from "express";
 
 const verifyFile = (req: Request, res: Response, next: NextFunction) => {
-  return upload.single("image")(req, res, (error): any => {
-    if (error && error.field === "image") return next(error);
-    if (req.file === undefined) return next();
+  upload.single("image")(req, res, error => {
+    if (error !== undefined && error.field === "image") {
+      next(error);
+      return;
+    }
+    if (req.file === undefined) {
+      next();
+      return;
+    }
     req.body.image = req.file;
     next();
   });

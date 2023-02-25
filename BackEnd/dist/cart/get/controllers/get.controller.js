@@ -17,10 +17,6 @@ const image_model_1 = __importDefault(require("../../../models/image.model"));
 const product_model_1 = __importDefault(require("../../../models/product.model"));
 const store_model_1 = __importDefault(require("../../../models/store.model"));
 const get = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    let limit = Number.isNaN(Number(req.query.limit)) ? 10 : Number(req.query.limit);
-    let page = Number.isNaN(Number(req.query.page)) ? 1 : Number(req.query.page);
-    let start = (page - 1) * limit;
-    let end = page * limit;
     const { idStore } = req.params;
     const { userId } = req.USER;
     try {
@@ -28,8 +24,7 @@ const get = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
             where: { userId, idStore },
             attributes: ["count", "idStore", "idProduct"],
             order: [["updatedAt", "ASC"]],
-            limit: limit,
-            offset: start,
+            limit: 100,
         })
             .then((values) => __awaiter(void 0, void 0, void 0, function* () {
             var _a, _b;
@@ -42,7 +37,7 @@ const get = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
                     attributes: ["discount", "price"],
                     include: [{ model: store_model_1.default, as: "store", attributes: ["discount"] }],
                 });
-                if (!product) {
+                if (product === null) {
                     yield cart_model_1.default.destroy({
                         where: {
                             idStore,
@@ -53,12 +48,14 @@ const get = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
                     return;
                 }
                 else {
-                    let price = Number(product === null || product === void 0 ? void 0 : product.getDataValue("discount")) == 0
+                    let price = Number(product === null || product === void 0 ? void 0 : product.getDataValue("discount")) === 0
                         ? Number(product === null || product === void 0 ? void 0 : product.getDataValue("price"))
                         : Number(product === null || product === void 0 ? void 0 : product.getDataValue("price")) -
                             Number(product === null || product === void 0 ? void 0 : product.getDataValue("price")) * (Number(product === null || product === void 0 ? void 0 : product.getDataValue("discount")) / 100);
                     price =
-                        Number((_a = product.store) === null || _a === void 0 ? void 0 : _a.discount) == 0 ? price : price - price * (Number((_b = product.store) === null || _b === void 0 ? void 0 : _b.discount) / 100);
+                        Number((_a = product.store) === null || _a === void 0 ? void 0 : _a.getDataValue("discount")) === 0
+                            ? price
+                            : price - price * (Number((_b = product.store) === null || _b === void 0 ? void 0 : _b.getDataValue("discount")) / 100);
                     yield cart_model_1.default.update({
                         price,
                         totalPrice: Number(value.getDataValue("count")) * Number(price),
@@ -74,6 +71,7 @@ const get = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
             }
         }))
             .then(() => __awaiter(void 0, void 0, void 0, function* () {
+            var _c, _d, _e, _f;
             const cart = yield cart_model_1.default.findAndCountAll({
                 where: { userId, idStore },
                 attributes: ["count", "price", "totalPrice"],
@@ -84,24 +82,33 @@ const get = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
                         attributes: ["nameProduct"],
                         include: [{ model: image_model_1.default, as: "image", attributes: ["secure_url"] }],
                     },
+                    { model: store_model_1.default, as: "store", attributes: ["tax"] },
                 ],
                 order: [["updatedAt", "ASC"]],
-                limit: limit,
-                offset: start,
+                limit: 100,
             });
-            let count = cart.count;
-            let pagination = {};
-            Object.assign(pagination, { totalRow: cart.count, totalPage: Math.ceil(count / limit) });
-            if (end < count) {
-                Object.assign(pagination, { next: { page: page + 1, limit, remaining: count - (start + limit) } });
+            let totalPrice = 0;
+            let tax = 0;
+            const products = [];
+            for (const value of cart.rows) {
+                products.push({
+                    nameProduct: (_c = value.product) === null || _c === void 0 ? void 0 : _c.getDataValue("nameProduct"),
+                    image: (_e = (_d = value.product) === null || _d === void 0 ? void 0 : _d.image) === null || _e === void 0 ? void 0 : _e.getDataValue("secure_url"),
+                    price: value.getDataValue("price"),
+                    totalPrice: value.getDataValue("totalPrice"),
+                    count: value.getDataValue("count"),
+                });
+                totalPrice += value.getDataValue("totalPrice");
+                tax += (Number((_f = value.store) === null || _f === void 0 ? void 0 : _f.getDataValue("tax")) / 100) * Number(value.getDataValue("totalPrice"));
             }
-            if (start > 0) {
-                Object.assign(pagination, { prev: { page: page - 1, limit, remaining: count - (count - start) } });
-            }
-            if (page > Math.ceil(count / limit)) {
-                Object.assign(pagination, { prev: { remaining: count } });
-            }
-            res.status(200).json({ success: true, pagination, data: cart });
+            const totalProduct = cart.count;
+            res
+                .status(200)
+                .json({
+                success: true,
+                data: products,
+                details: { totalProduct, totalPrice, tax, totals: tax + totalPrice },
+            });
         }))
             .catch(error => {
             throw new Error(error);

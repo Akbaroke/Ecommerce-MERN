@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from "express";
+import { type Request, type Response, type NextFunction } from "express";
 import User from "@model/user.model";
 import Image from "@model/image.model";
 
@@ -12,7 +12,7 @@ const getUser = async (req: Request, res: Response, next: NextFunction): Promise
       attributes: ["id", "nama", "email", "status", "role"],
       include: [{ model: Image, as: "image", attributes: ["secure_url"] }],
     });
-    if (!user) return res.status(404).json({ success: false, error: { message: "user not found" } });
+    if (user == null) return res.status(404).json({ success: false, error: { message: "user not found" } });
     res.status(200).json({ success: true, data: user });
   } catch (error) {
     next(error);

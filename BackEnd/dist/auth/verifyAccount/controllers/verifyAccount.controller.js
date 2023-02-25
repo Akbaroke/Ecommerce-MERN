@@ -21,7 +21,7 @@ const verifyAccount = (req, res, next) => __awaiter(void 0, void 0, void 0, func
         const findOtpInTable = yield otp_model_1.default.findOne({
             where: { otp, type: "register" },
         });
-        if (!findOtpInTable)
+        if (findOtpInTable === null)
             return res.status(400).json({ success: false, error: { message: "otp invalid" } });
         if (Number(findOtpInTable.getDataValue("expiredAt")) < Number(new Date().getTime())) {
             yield otp_model_1.default.destroy({
@@ -36,7 +36,7 @@ const verifyAccount = (req, res, next) => __awaiter(void 0, void 0, void 0, func
             attributes: ["expiredAt", "status", "nama"],
             where: { email: findOtpInTable.getDataValue("email") },
         });
-        if (!user ||
+        if (user == null ||
             user.getDataValue("expiredAt") === null ||
             user.getDataValue("status") === "active") {
             yield otp_model_1.default.destroy({

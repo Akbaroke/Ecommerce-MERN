@@ -23,7 +23,7 @@ const getStore = (req, res, next) => __awaiter(void 0, void 0, void 0, function*
             attributes: ["nameStore", "tax", "income", "discount"],
             include: [{ model: image_model_1.default, as: "image", attributes: ["secure_url"] }],
         });
-        if (!store)
+        if (store == null)
             return res.status(404).json({ success: false, error: { message: "Store not found" } });
         const data = crypto_js_1.default.AES.encrypt(JSON.stringify(store), process.env.SALTHASHIDS).toString();
         res.status(200).json({

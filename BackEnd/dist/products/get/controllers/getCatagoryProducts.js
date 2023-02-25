@@ -17,14 +17,14 @@ const getCatagoryProducts = (req, res, next) => __awaiter(void 0, void 0, void 0
     const { idStore } = req.params;
     try {
         const products = yield product_model_1.default.findAll({ where: { idStore }, attributes: ["category"] });
-        let data = [];
+        const data = [];
         products.forEach((value) => __awaiter(void 0, void 0, void 0, function* () {
             const cek = data.findIndex(obj => obj.category === value.getDataValue("category"));
             if (cek === -1) {
                 data.push({ category: value.getDataValue("category"), count: 1 });
             }
             else {
-                data[cek].count += 1;
+                data[cek].count = Number(data[cek].count) + 1;
             }
         }));
         res.status(200).json(data);

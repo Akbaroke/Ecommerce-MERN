@@ -33,8 +33,9 @@ const updateProduct = (req, res, next) => __awaiter(void 0, void 0, void 0, func
                 include: [{ model: image_model_1.default, as: "image", attributes: ["idCloud"] }],
             })
                 .then((value) => __awaiter(void 0, void 0, void 0, function* () {
+                var _a;
                 const { secure_url, public_id } = yield cloud_config_1.default.uploader.upload(image === null || image === void 0 ? void 0 : image.path, {
-                    public_id: value === null || value === void 0 ? void 0 : value.image.idCloud,
+                    public_id: (_a = value === null || value === void 0 ? void 0 : value.image) === null || _a === void 0 ? void 0 : _a.getDataValue("idCloud"),
                 });
                 yield image_model_1.default.update({ secure_url, idCloud: public_id }, { where: { idImage: value === null || value === void 0 ? void 0 : value.getDataValue("idImage") } });
             }))

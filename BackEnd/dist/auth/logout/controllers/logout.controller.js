@@ -15,7 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const token_model_1 = __importDefault(require("../../../models/token.model"));
 const logout = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     var _a, _b;
-    const token = (_b = (_a = req.headers["authorization"]) === null || _a === void 0 ? void 0 : _a.split(" ")[1]) !== null && _b !== void 0 ? _b : "";
+    const token = (_b = (_a = req.headers.authorization) === null || _a === void 0 ? void 0 : _a.split(" ")[1]) !== null && _b !== void 0 ? _b : "";
     try {
         if (token === undefined)
             return res.status(400).json({ success: false, error: { message: "token required" } });

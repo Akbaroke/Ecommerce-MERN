@@ -19,6 +19,7 @@ const update = (req, res, next) => __awaiter(void 0, void 0, void 0, function* (
     const { userId } = req.USER;
     const { count } = req.body;
     try {
+        console.log(typeof count);
         yield cart_model_1.default.findOne({
             where: {
                 idStore: is,
@@ -29,9 +30,12 @@ const update = (req, res, next) => __awaiter(void 0, void 0, void 0, function* (
             include: [{ model: product_model_1.default, as: "product", attributes: ["nameProduct", "stock"] }],
         })
             .then((value) => __awaiter(void 0, void 0, void 0, function* () {
-            var _a;
-            if (count > (value === null || value === void 0 ? void 0 : value.product.stock)) {
-                res.status(400).json({ success: false, error: { message: `remaining stock ${(_a = value === null || value === void 0 ? void 0 : value.product) === null || _a === void 0 ? void 0 : _a.stock}` } });
+            var _a, _b;
+            if (count > Number((_a = value === null || value === void 0 ? void 0 : value.product) === null || _a === void 0 ? void 0 : _a.getDataValue("stock"))) {
+                return res.status(400).json({
+                    success: false,
+                    error: { message: `remaining stock ${Number((_b = value === null || value === void 0 ? void 0 : value.product) === null || _b === void 0 ? void 0 : _b.getDataValue("stock"))}` },
+                });
             }
             else {
                 yield cart_model_1.default.update({
@@ -45,7 +49,7 @@ const update = (req, res, next) => __awaiter(void 0, void 0, void 0, function* (
                         userId,
                     },
                 });
-                res.status(200).json({ success: true, data: { message: "success" } });
+                return res.status(200).json({ success: true, data: { message: "success" } });
             }
         }))
             .catch(error => {

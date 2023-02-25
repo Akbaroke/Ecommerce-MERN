@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from "express";
+import { type Request, type Response, type NextFunction } from "express";
 import Product from "@model/product.model";
 import Image from "@model/image.model";
 import cloud from "@config/cloud.config";
@@ -22,11 +22,11 @@ const updateProduct = async (req: Request, res: Response, next: NextFunction): P
       })
         .then(async value => {
           const { secure_url, public_id } = await cloud.uploader.upload(image?.path as string, {
-            public_id: value?.image.idCloud as string,
+            public_id: value?.image?.getDataValue("idCloud") as string,
           });
           await Image.update(
             { secure_url, idCloud: public_id },
-            { where: { idImage: value?.getDataValue("idImage") } }
+            { where: { idImage: value?.getDataValue("idImage") as string } }
           );
         })
         .catch(error => {

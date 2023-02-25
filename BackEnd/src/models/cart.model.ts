@@ -1,23 +1,25 @@
 import { DataTypes, Model, UUIDV4 } from "sequelize";
 import Product from "./product.model";
 import db from "@config/database.config";
+import Store from "./store.model";
 
 export interface ICartModel {
   idCart?: string;
   userId: string;
   idStore: string;
   idProduct: string;
-  count: Number;
-  price: Number;
-  totalPrice: Number;
-  createdAt?: Number;
-  updatedAt?: Number;
+  count: number;
+  price: number;
+  totalPrice: number;
+  createdAt?: number;
+  updatedAt?: number;
 }
 
 class Cart extends Model<ICartModel> {
-  createdAt?: Number;
-  updatedAt?: Number;
-  product?: any;
+  createdAt?: number;
+  updatedAt?: number;
+  product?: Product;
+  store?: Store;
 }
 
 Cart.init(
@@ -79,4 +81,6 @@ Cart.init(
 Cart.removeAttribute("id");
 Product.hasOne(Cart, { foreignKey: "idProduct" });
 Cart.belongsTo(Product, { as: "product", foreignKey: "idProduct" });
+Store.hasOne(Cart, { foreignKey: "idStore" });
+Cart.belongsTo(Store, { as: "store", foreignKey: "idStore" });
 export default Cart;

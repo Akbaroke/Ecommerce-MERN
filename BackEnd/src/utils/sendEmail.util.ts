@@ -1,5 +1,5 @@
 import nodemailer from "nodemailer";
-import { Request } from "express";
+import { type Request } from "express";
 
 const transporter = () => {
   return nodemailer.createTransport({
@@ -14,9 +14,9 @@ const transporter = () => {
   });
 };
 
-const sendEmail = (email: string, otp: string): Promise<Boolean> => {
-  let mailOptions = {
-    from: `"Verify your email"<${process.env.USER}>`,
+const sendEmail = async (email: string, otp: string): Promise<boolean> => {
+  const mailOptions = {
+    from: `"Verify your email"<${process.env.USER as string}>`,
     to: email,
     subject: "-OTP-",
     html: `
@@ -24,16 +24,16 @@ const sendEmail = (email: string, otp: string): Promise<Boolean> => {
   };
 
   try {
-    transporter().sendMail(mailOptions);
-    return Promise.resolve(true);
+    void transporter().sendMail(mailOptions);
+    return await Promise.resolve(true);
   } catch (error: any) {
-    return Promise.resolve(false);
+    return await Promise.resolve(false);
   }
 };
 
-const sendEmailAfterVerification = (email: string, nama: string) => {
-  let mailOptions = {
-    from: `"email verification successful"<${process.env.USER}>`,
+const sendEmailAfterVerification = async (email: string, nama: string) => {
+  const mailOptions = {
+    from: `"email verification successful"<${process.env.USER as string}>`,
     to: email,
     subject: "Success",
     html: `
@@ -44,31 +44,37 @@ const sendEmailAfterVerification = (email: string, nama: string) => {
   };
 
   try {
-    transporter().sendMail(mailOptions);
-    return Promise.resolve(true);
+    void transporter().sendMail(mailOptions);
+    return await Promise.resolve(true);
   } catch (error: any) {
-    return Promise.resolve(false);
+    return await Promise.resolve(false);
   }
 };
 
-const sendEmailForCollaboration = (req: Request, email: string, nama: string, nameStore: string, idStore: string) => {
-  let mailOptions = {
-    from: `"Verification for collaboration"<${process.env.USER}>`,
+const sendEmailForCollaboration = async (
+  req: Request,
+  email: string,
+  nama: string,
+  nameStore: string,
+  idStore: string
+) => {
+  const mailOptions = {
+    from: `"Verification for collaboration"<${process.env.USER as string}>`,
     to: email,
     subject: "Collaboration",
     html: `
         <center>
         <h3>halo ${nama} anda diajak collaboration di ${nameStore}</h3>
-        <a href="http://${req.headers.host}/api/store/accept/${idStore}">klik disini untuk menerima</a>
+        <a href="http://${req.headers.host as string}/api/store/accept/${idStore}">klik disini untuk menerima</a>
         </center>
         `,
   };
 
   try {
-    transporter().sendMail(mailOptions);
-    return Promise.resolve(true);
+    void transporter().sendMail(mailOptions);
+    return await Promise.resolve(true);
   } catch (error: any) {
-    return Promise.resolve(false);
+    return await Promise.resolve(false);
   }
 };
 

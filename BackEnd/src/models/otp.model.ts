@@ -1,15 +1,15 @@
 import { Model, DataTypes, UUIDV4 } from "sequelize";
 import db from "../configs/database.config";
-import { TYPE } from "../types/default";
+import { type TYPE } from "../types/default";
 export interface IOtpModel {
   otpId?: string;
   ip: string;
   email: string;
   otp: string;
   type?: TYPE;
-  createdAt?: Number;
-  updatedAt?: Number;
-  expiredAt?: Number;
+  createdAt?: number;
+  updatedAt?: number;
+  expiredAt?: number;
 }
 
 class Otp extends Model<IOtpModel> {
@@ -17,9 +17,9 @@ class Otp extends Model<IOtpModel> {
   email?: string;
   otp?: string;
   type?: TYPE;
-  updatedAt?: Number;
-  createdAt?: Number;
-  expiredAt?: Number;
+  updatedAt?: number;
+  createdAt?: number;
+  expiredAt?: number;
 }
 
 Otp.init(

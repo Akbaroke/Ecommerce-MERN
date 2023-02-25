@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from "express";
+import { type Request, type Response, type NextFunction } from "express";
 import Cart from "@model/cart.model";
 
 const deleteCart = async (req: Request, res: Response, next: NextFunction): Promise<any> => {
@@ -12,7 +12,7 @@ const deleteCart = async (req: Request, res: Response, next: NextFunction): Prom
         userId,
       },
     });
-    if (!cart) {
+    if (cart === 0) {
       return res.status(404).json({ success: false, error: { message: "cart not found" } });
     }
     res.status(200).json({ success: true, data: { message: "success" } });

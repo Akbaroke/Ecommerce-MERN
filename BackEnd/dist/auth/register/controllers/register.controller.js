@@ -31,7 +31,7 @@ const register = (req, res, next) => __awaiter(void 0, void 0, void 0, function*
                 },
                 attributes: ["nama"],
             });
-            if (!findUser) {
+            if (findUser == null) {
                 cekId = false;
             }
             else {
@@ -44,15 +44,15 @@ const register = (req, res, next) => __awaiter(void 0, void 0, void 0, function*
             },
             attributes: ["nama"],
         });
-        if (findUser) {
-            t.rollback();
+        if (findUser != null) {
+            yield t.rollback();
             return res.status(400).json({ success: false, error: { message: "user already exists" } });
         }
         const findUserInTableOtp = yield otp_model_1.default.findOne({
             where: { email, type: "register" },
         });
-        if (findUserInTableOtp) {
-            t.rollback();
+        if (findUserInTableOtp !== null) {
+            yield t.rollback();
             yield otp_model_1.default.destroy({ where: { email } });
             return res.status(400).json({ success: false, error: { message: "otp already exists" } });
         }
@@ -69,16 +69,16 @@ const register = (req, res, next) => __awaiter(void 0, void 0, void 0, function*
             otp: otp,
             type: "register",
         }, { transaction: t });
-        t.commit();
+        yield t.commit();
         const valid = yield (0, sendEmail_util_1.sendEmail)(email, createOtp.otp);
         if (!valid) {
-            t.rollback();
+            yield t.rollback();
             throw new Error("failed to send email");
         }
         res.status(200).json({ success: true, data: { message: "Register successfully" } });
     }
     catch (error) {
-        t.rollback();
+        yield t.rollback();
         next(error);
     }
 });

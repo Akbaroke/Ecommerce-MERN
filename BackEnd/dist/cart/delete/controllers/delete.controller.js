@@ -24,7 +24,7 @@ const deleteCart = (req, res, next) => __awaiter(void 0, void 0, void 0, functio
                 userId,
             },
         });
-        if (!cart) {
+        if (cart === 0) {
             return res.status(404).json({ success: false, error: { message: "cart not found" } });
         }
         res.status(200).json({ success: true, data: { message: "success" } });

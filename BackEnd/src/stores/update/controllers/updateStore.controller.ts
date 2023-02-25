@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from "express";
+import { type Request, type Response, type NextFunction } from "express";
 import { checkAccessUserInStoreAsOwner } from "@service/store.service";
 import Store from "@model/store.model";
 import Image from "@model/image.model";
@@ -9,7 +9,7 @@ const updateStore = async (req: Request, res: Response, next: NextFunction): Pro
   const { userId } = req.USER;
   const { nameStore, tax, discount, image } = req.body;
   try {
-    if (!(await checkAccessUserInStoreAsOwner(userId, idStore as string)))
+    if (!(await checkAccessUserInStoreAsOwner(userId as string, idStore)))
       return res.status(400).json({ success: false, error: { message: "You are not alowed to do that" } });
 
     if (image !== undefined) {
@@ -22,7 +22,7 @@ const updateStore = async (req: Request, res: Response, next: NextFunction): Pro
       })
         .then(async value => {
           const { secure_url, public_id } = await cloud.uploader.upload(image?.path as string, {
-            public_id: value?.image.idCloud as string,
+            public_id: value?.image?.getDataValue("idCloud"),
           });
           await Image.update(
             { secure_url, idCloud: public_id },

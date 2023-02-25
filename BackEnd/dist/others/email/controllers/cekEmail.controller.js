@@ -20,7 +20,7 @@ const cekEmail = (req, res, next) => __awaiter(void 0, void 0, void 0, function*
             attributes: ["nama"],
             where: { email },
         });
-        if (!user)
+        if (user === null)
             return res.status(200).json({ success: true, data: { message: "email available" } });
         res.status(202).json({ success: true, data: { message: "email not available" } });
     }

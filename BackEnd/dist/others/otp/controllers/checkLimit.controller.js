@@ -24,9 +24,9 @@ const checkLimitBeforeTakeTheOtp = (req, res, next) => __awaiter(void 0, void 0,
             attributes: ["nama", "expiredAt"],
             where: { email },
         });
-        if (!user || (!findOtp && user.getDataValue("expiredAt") === null))
+        if (user == null || (findOtp == null && user.getDataValue("expiredAt") === null))
             return res.status(400).json({ success: false, error: { message: "user not found" } });
-        if (!findOtp) {
+        if (findOtp == null) {
             return res.status(200).json({
                 success: false,
                 data: {
@@ -35,12 +35,12 @@ const checkLimitBeforeTakeTheOtp = (req, res, next) => __awaiter(void 0, void 0,
                 },
             });
         }
-        if (Number(new Date().getTime()) - Number(findOtp === null || findOtp === void 0 ? void 0 : findOtp.updatedAt) < 60000) {
+        if (Number(new Date().getTime()) - Number(findOtp === null || findOtp === void 0 ? void 0 : findOtp.getDataValue("updatedAt")) < 60000) {
             throw new Error("wait a minute");
         }
         res.status(200).json({
             success: true,
-            data: { time: findOtp === null || findOtp === void 0 ? void 0 : findOtp.updatedAt, message: ">1" },
+            data: { time: findOtp === null || findOtp === void 0 ? void 0 : findOtp.getDataValue("updatedAt"), message: ">1" },
         });
     }
     catch (error) {

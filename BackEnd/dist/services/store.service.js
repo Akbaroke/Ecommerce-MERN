@@ -20,12 +20,12 @@ const checkAccessUserInStore = (userId, idStore) => __awaiter(void 0, void 0, vo
         where: { idStore },
         attributes: ["access"],
     });
-    if (!store)
-        return Promise.resolve(false);
+    if (store == null)
+        return yield Promise.resolve(false);
     const access = Array.from(JSON.parse(store.access));
-    if ((yield (0, checkUserInStore_util_1.checkUserInStore)(userId, access)) === false)
-        return Promise.resolve(false);
-    return Promise.resolve(true);
+    if (!(yield (0, checkUserInStore_util_1.checkUserInStore)(userId, access)))
+        return yield Promise.resolve(false);
+    return yield Promise.resolve(true);
 });
 exports.checkAccessUserInStore = checkAccessUserInStore;
 const checkAccessUserInStoreAsOwner = (userId, idStore) => __awaiter(void 0, void 0, void 0, function* () {
@@ -33,11 +33,11 @@ const checkAccessUserInStoreAsOwner = (userId, idStore) => __awaiter(void 0, voi
         where: { idStore },
         attributes: ["access"],
     });
-    if (!store)
-        return Promise.resolve(false);
+    if (store == null)
+        return yield Promise.resolve(false);
     const access = Array.from(JSON.parse(store.access));
-    if ((yield (0, checkUserInStore_util_1.checkUserInStoreAsOwner)(userId, access)) === false)
-        return Promise.resolve(false);
-    return Promise.resolve(true);
+    if (!(yield (0, checkUserInStore_util_1.checkUserInStoreAsOwner)(userId, access)))
+        return yield Promise.resolve(false);
+    return yield Promise.resolve(true);
 });
 exports.checkAccessUserInStoreAsOwner = checkAccessUserInStoreAsOwner;

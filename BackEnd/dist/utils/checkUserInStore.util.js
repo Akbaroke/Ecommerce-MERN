@@ -12,11 +12,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.checkUserInStoreAsOwner = exports.checkUserInStore = void 0;
 const checkUserInStore = (id, data) => __awaiter(void 0, void 0, void 0, function* () {
     const check = data.find(value => id === value.userId);
-    return check ? true : false;
+    return check !== undefined ? true : false;
 });
 exports.checkUserInStore = checkUserInStore;
 const checkUserInStoreAsOwner = (id, data) => __awaiter(void 0, void 0, void 0, function* () {
     const check = data.find(value => id === value.userId && value.role === "owner");
-    return check ? true : false;
+    return check !== undefined ? true : false;
 });
 exports.checkUserInStoreAsOwner = checkUserInStoreAsOwner;

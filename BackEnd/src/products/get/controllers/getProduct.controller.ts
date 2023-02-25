@@ -1,19 +1,19 @@
 import Image from "@model/image.model";
 import Product from "@model/product.model";
-import { Request, Response, NextFunction } from "express";
+import { type Request, type Response, type NextFunction } from "express";
 import { Op } from "sequelize";
 
 const getProducts = async (req: Request, res: Response, next: NextFunction) => {
-  let limit = Number.isNaN(Number(req.query.limit)) ? 10 : Number(req.query.limit);
-  let page = Number.isNaN(Number(req.query.page)) ? 1 : Number(req.query.page);
-  let search = req.query.search === undefined || req.query.search === "" ? "" : req.query.search;
-  let start = (page - 1) * limit;
-  let end = page * limit;
+  const limit = Number.isNaN(Number(req.query.limit)) ? 10 : Number(req.query.limit);
+  const page = Number.isNaN(Number(req.query.page)) ? 1 : Number(req.query.page);
+  const search = req.query.search === undefined || req.query.search === "" ? "" : req.query.search;
+  const start = (page - 1) * limit;
+  const end = page * limit;
   try {
     const products = await Product.findAndCountAll({
       where: {
         idStore: req.params.idStore,
-        nameProduct: { [Op.like]: `%${search}%` },
+        nameProduct: { [Op.like]: `%${search as string}%` },
       },
       attributes: [
         "idProduct",
@@ -28,11 +28,11 @@ const getProducts = async (req: Request, res: Response, next: NextFunction) => {
       ],
       order: [["updatedAt", "DESC"]],
       include: [{ model: Image, as: "image", attributes: ["secure_url"] }],
-      limit: limit,
+      limit,
       offset: start,
     });
-    let count = products.count;
-    let pagination = {};
+    const count = products.count;
+    const pagination = {};
     Object.assign(pagination, { totalRow: products.count, totalPage: Math.ceil(count / limit) });
     if (end < count) {
       Object.assign(pagination, { next: { page: page + 1, limit, remaining: count - (start + limit) } });

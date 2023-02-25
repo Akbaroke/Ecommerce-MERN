@@ -11,13 +11,13 @@ const notFound = (_req, _res, next) => {
 };
 exports.notFound = notFound;
 const errorHandler = (error, _req, res, _next) => {
-    var _a, _b;
+    var _a, _b, _c;
     logger_log_1.default.error(error.message);
-    res.status(error.status || 500).json({
+    res.status((_a = error.status) !== null && _a !== void 0 ? _a : 500).json({
         success: false,
         error: {
             message: error.message,
-            _message: (_b = (_a = error.parent) === null || _a === void 0 ? void 0 : _a.sqlMessage) !== null && _b !== void 0 ? _b : undefined,
+            _message: (_c = (_b = error.parent) === null || _b === void 0 ? void 0 : _b.sqlMessage) !== null && _c !== void 0 ? _c : undefined,
         },
     });
 };

@@ -23,7 +23,7 @@ const takeTheOtp = (req, res, next) => __awaiter(void 0, void 0, void 0, functio
             attributes: ["nama"],
             where: { email, status: "pending" },
         });
-        if (!user) {
+        if (user == null) {
             return res.status(400).json({ success: false, error: { message: "user not found" } });
         }
         const otp = yield otp_model_1.default.findOne({
@@ -34,7 +34,7 @@ const takeTheOtp = (req, res, next) => __awaiter(void 0, void 0, void 0, functio
         if (!valid) {
             throw new Error("failed to send email");
         }
-        if (!otp) {
+        if (otp == null) {
             yield otp_model_1.default.create({
                 email,
                 type: type,

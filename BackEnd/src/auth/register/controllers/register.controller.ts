@@ -1,11 +1,11 @@
-import { NextFunction, Request, Response } from "express";
+import { type NextFunction, type Request, type Response } from "express";
 import ShortUniqueId from "short-unique-id";
 import User from "@model/user.model";
 import Otp from "@model/otp.model";
 import db from "@config/database.config";
 import generateOTP from "@util/generateOtp.util";
 import { sendEmail } from "@util/sendEmail.util";
-import { TYPE } from "@tp/default";
+import { type TYPE } from "@tp/default";
 
 const register = async (req: Request, res: Response, next: NextFunction): Promise<any> => {
   const { nama, email, password, ip } = req.body;
@@ -20,7 +20,7 @@ const register = async (req: Request, res: Response, next: NextFunction): Promis
         },
         attributes: ["nama"],
       });
-      if (!findUser) {
+      if (findUser == null) {
         cekId = false;
       } else {
         id = new ShortUniqueId().randomUUID(8);
@@ -34,16 +34,16 @@ const register = async (req: Request, res: Response, next: NextFunction): Promis
       attributes: ["nama"],
     });
 
-    if (findUser) {
-      t.rollback();
+    if (findUser != null) {
+      await t.rollback();
       return res.status(400).json({ success: false, error: { message: "user already exists" } });
     }
 
     const findUserInTableOtp = await Otp.findOne({
       where: { email, type: "register" },
     });
-    if (findUserInTableOtp) {
-      t.rollback();
+    if (findUserInTableOtp !== null) {
+      await t.rollback();
       await Otp.destroy({ where: { email } });
       return res.status(400).json({ success: false, error: { message: "otp already exists" } });
     }
@@ -67,15 +67,15 @@ const register = async (req: Request, res: Response, next: NextFunction): Promis
       },
       { transaction: t }
     );
-    t.commit();
-    const valid: Boolean = await sendEmail(email as string, createOtp.otp as string);
+    await t.commit();
+    const valid: boolean = await sendEmail(email as string, createOtp.otp as string);
     if (!valid) {
-      t.rollback();
+      await t.rollback();
       throw new Error("failed to send email");
     }
     res.status(200).json({ success: true, data: { message: "Register successfully" } });
   } catch (error: any) {
-    t.rollback();
+    await t.rollback();
     next(error);
   }
 };

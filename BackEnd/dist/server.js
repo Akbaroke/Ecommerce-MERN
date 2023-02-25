@@ -10,6 +10,7 @@ const logger_log_1 = __importDefault(require("./logs/logger.log"));
 const errorHandlers_middleware_1 = require("./middlewares/errorHandlers.middleware");
 require("dotenv/config");
 const database_config_1 = __importDefault(require("./configs/database.config"));
+const cookie_parser_1 = __importDefault(require("cookie-parser"));
 const index_1 = __importDefault(require("./auth/index"));
 const index_2 = __importDefault(require("./stores/index"));
 const index_3 = __importDefault(require("./products/index"));
@@ -28,12 +29,13 @@ database_config_1.default.sync({ alter: true, force: false })
     process.exit(1);
 });
 const app = (0, express_1.default)();
-if (process.env.NODE_ENV)
+if (process.env.NODE_ENV === "production")
     app.set("trust proxy", 1);
 if (process.env.NODE_ENV === "development")
     app.use((0, morgan_1.default)("dev"));
 app.use(express_1.default.json());
 app.use(express_1.default.urlencoded({ extended: true }));
+app.use((0, cookie_parser_1.default)());
 app.use((0, cors_1.default)({
     origin: true,
     credentials: true,

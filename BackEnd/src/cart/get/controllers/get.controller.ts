@@ -1,14 +1,10 @@
-import { Request, Response, NextFunction } from "express";
+import { type Request, type Response, type NextFunction } from "express";
 import Cart from "@model/cart.model";
 import Image from "@model/image.model";
 import Product from "@model/product.model";
 import Store from "@model/store.model";
 
 const get = async (req: Request, res: Response, next: NextFunction): Promise<any> => {
-  let limit = Number.isNaN(Number(req.query.limit)) ? 10 : Number(req.query.limit);
-  let page = Number.isNaN(Number(req.query.page)) ? 1 : Number(req.query.page);
-  let start = (page - 1) * limit;
-  let end = page * limit;
   const { idStore } = req.params;
   const { userId } = req.USER;
   try {
@@ -16,8 +12,7 @@ const get = async (req: Request, res: Response, next: NextFunction): Promise<any
       where: { userId, idStore },
       attributes: ["count", "idStore", "idProduct"],
       order: [["updatedAt", "ASC"]],
-      limit: limit,
-      offset: start,
+      limit: 100,
     })
       .then(async values => {
         for (const value of values) {
@@ -29,7 +24,7 @@ const get = async (req: Request, res: Response, next: NextFunction): Promise<any
             attributes: ["discount", "price"],
             include: [{ model: Store, as: "store", attributes: ["discount"] }],
           });
-          if (!product) {
+          if (product === null) {
             await Cart.destroy({
               where: {
                 idStore,
@@ -40,13 +35,15 @@ const get = async (req: Request, res: Response, next: NextFunction): Promise<any
             return;
           } else {
             let price =
-              Number(product?.getDataValue("discount")) == 0
+              Number(product?.getDataValue("discount")) === 0
                 ? Number(product?.getDataValue("price"))
                 : Number(product?.getDataValue("price")) -
                   Number(product?.getDataValue("price")) * (Number(product?.getDataValue("discount")) / 100);
 
             price =
-              Number(product.store?.discount) == 0 ? price : price - price * (Number(product.store?.discount) / 100);
+              Number(product.store?.getDataValue("discount")) === 0
+                ? price
+                : price - price * (Number(product.store?.getDataValue("discount")) / 100);
 
             await Cart.update(
               {
@@ -76,24 +73,34 @@ const get = async (req: Request, res: Response, next: NextFunction): Promise<any
               attributes: ["nameProduct"],
               include: [{ model: Image, as: "image", attributes: ["secure_url"] }],
             },
+            { model: Store, as: "store", attributes: ["tax"] },
           ],
           order: [["updatedAt", "ASC"]],
-          limit: limit,
-          offset: start,
+          limit: 100,
         });
-        let count = cart.count;
-        let pagination = {};
-        Object.assign(pagination, { totalRow: cart.count, totalPage: Math.ceil(count / limit) });
-        if (end < count) {
-          Object.assign(pagination, { next: { page: page + 1, limit, remaining: count - (start + limit) } });
+        let totalPrice = 0;
+        let tax = 0;
+        const products: any[] = [];
+        for (const value of cart.rows) {
+          products.push({
+            nameProduct: value.product?.getDataValue("nameProduct"),
+            image: value.product?.image?.getDataValue("secure_url"),
+            price: value.getDataValue("price"),
+            totalPrice: value.getDataValue("totalPrice"),
+            count: value.getDataValue("count"),
+          });
+          totalPrice += value.getDataValue("totalPrice");
+          tax += (Number(value.store?.getDataValue("tax")) / 100) * Number(value.getDataValue("totalPrice"));
         }
-        if (start > 0) {
-          Object.assign(pagination, { prev: { page: page - 1, limit, remaining: count - (count - start) } });
-        }
-        if (page > Math.ceil(count / limit)) {
-          Object.assign(pagination, { prev: { remaining: count } });
-        }
-        res.status(200).json({ success: true, pagination, data: cart });
+
+        const totalProduct = cart.count;
+        res
+          .status(200)
+          .json({
+            success: true,
+            data: products,
+            details: { totalProduct, totalPrice, tax, totals: tax + totalPrice },
+          });
       })
       .catch(error => {
         throw new Error(error);

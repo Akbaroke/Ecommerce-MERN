@@ -1,5 +1,5 @@
-import joi, { ObjectSchema } from "joi";
-import { Request, Response, NextFunction } from "express";
+import joi, { type ObjectSchema } from "joi";
+import { type Request, type Response, type NextFunction } from "express";
 import logger from "../logs/logger.log";
 
 const validateQuery = (schema: ObjectSchema) => {

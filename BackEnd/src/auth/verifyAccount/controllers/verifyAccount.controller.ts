@@ -1,7 +1,7 @@
 import Otp from "@model/otp.model";
-import { Request, Response, NextFunction } from "express";
+import { type Request, type Response, type NextFunction } from "express";
 import User from "@model/user.model";
-import { STATUS } from "@tp/default";
+import { type STATUS } from "@tp/default";
 import { sendEmailAfterVerification } from "@util/sendEmail.util";
 
 const verifyAccount = async (req: Request, res: Response, next: NextFunction): Promise<any> => {
@@ -10,7 +10,7 @@ const verifyAccount = async (req: Request, res: Response, next: NextFunction): P
     const findOtpInTable = await Otp.findOne({
       where: { otp, type: "register" },
     });
-    if (!findOtpInTable) return res.status(400).json({ success: false, error: { message: "otp invalid" } });
+    if (findOtpInTable === null) return res.status(400).json({ success: false, error: { message: "otp invalid" } });
 
     if (Number(findOtpInTable.getDataValue("expiredAt")) < Number(new Date().getTime())) {
       await Otp.destroy({
@@ -27,7 +27,7 @@ const verifyAccount = async (req: Request, res: Response, next: NextFunction): P
       where: { email: findOtpInTable.getDataValue("email") },
     });
     if (
-      !user ||
+      user == null ||
       user.getDataValue("expiredAt") === null ||
       user.getDataValue("status") === ("active" as unknown as STATUS)
     ) {
@@ -58,10 +58,7 @@ const verifyAccount = async (req: Request, res: Response, next: NextFunction): P
       { where: { email: findOtpInTable.getDataValue("email") } }
     );
 
-    await sendEmailAfterVerification(
-      findOtpInTable.getDataValue("email") as string,
-      user.getDataValue("nama") as string
-    );
+    await sendEmailAfterVerification(findOtpInTable.getDataValue("email"), user.getDataValue("nama"));
 
     await Otp.destroy({
       where: {

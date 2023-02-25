@@ -74,7 +74,7 @@ User.init({
         beforeCreate: (user) => __awaiter(void 0, void 0, void 0, function* () {
             const time = new Date(new Date().setHours(new Date().getHours() + 24));
             const createdAtAndUpdatedAt = new Date().getTime();
-            String(user.status) == "active" ? (user.expiredAt = undefined) : (user.expiredAt = Number(time.getTime()));
+            String(user.status) === "active" ? (user.expiredAt = undefined) : (user.expiredAt = Number(time.getTime()));
             user.createdAt = Number(createdAtAndUpdatedAt);
             user.updatedAt = Number(createdAtAndUpdatedAt);
         }),
