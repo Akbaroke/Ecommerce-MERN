@@ -1,6 +1,16 @@
 import jwt from "jsonwebtoken";
 
-const generateToken = async (userId: string, email: string, nama: string, role: string) => {
+const generateToken = async ({
+  userId,
+  email,
+  nama,
+  role,
+}: {
+  userId: string;
+  email: string;
+  nama: string;
+  role: string;
+}) => {
   const accessToken = jwt.sign({ userId, email, nama, role }, process.env.ACCESSTOKENSECRET as string, {
     expiresIn: 900,
   });
@@ -10,7 +20,17 @@ const generateToken = async (userId: string, email: string, nama: string, role: 
   return await Promise.resolve({ accessToken, refreshToken });
 };
 
-const generateAccessToken = async (userId: string, email: string, nama: string, role: string) => {
+const generateAccessToken = async ({
+  userId,
+  email,
+  nama,
+  role,
+}: {
+  userId: string;
+  email: string;
+  nama: string;
+  role: string;
+}) => {
   const accessToken = jwt.sign({ userId, email, nama, role }, process.env.ACCESSTOKENSECRET as string, {
     expiresIn: 900,
   });

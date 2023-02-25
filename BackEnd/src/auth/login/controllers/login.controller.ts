@@ -13,11 +13,11 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
       where: {
         email,
       },
-    }).then(async (values): Promise<any> => {
-      if (values === null) return res.status(400).json({ success: false, error: { message: "user not found" } });
+    }).then(async (value): Promise<any> => {
+      if (value === null) return res.status(400).json({ success: false, error: { message: "user not found" } });
 
-      if (values.status !== ("active" as unknown as STATUS)) {
-        if (Number(values.getDataValue("expiredAt")) < Number(new Date().getTime())) {
+      if (value.status !== ("active" as unknown as STATUS)) {
+        if (Number(value.getDataValue("expiredAt")) < Number(new Date().getTime())) {
           await User.destroy({
             where: { email },
           });
@@ -32,19 +32,19 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
           error: { message: "the account has not been verified" },
         });
       }
-      const valid = await values.comparePassword?.(password as string);
+      const valid = await value.comparePassword?.(password as string);
       if (valid === false) return res.status(401).json({ success: false, error: { message: "password invalid" } });
 
-      const { accessToken, refreshToken } = await generateToken(
-        values.getDataValue("id"),
-        values.getDataValue("email"),
-        values.getDataValue("nama"),
-        values.getDataValue("role") as unknown as string
-      );
-      if (values.tokenId === null || values.tokenId === undefined) {
+      const { accessToken, refreshToken } = await generateToken({
+        userId: value.getDataValue("id"),
+        email: value.getDataValue("email"),
+        nama: value.getDataValue("nama"),
+        role: value.getDataValue("role") as unknown as string,
+      });
+      if (value.tokenId === null || value.tokenId === undefined) {
         const createToken = await Token.create({ accessToken, refreshToken });
-        values.setDataValue("tokenId", createToken.getDataValue("tokenId"));
-        await values.save();
+        value.setDataValue("tokenId", createToken.getDataValue("tokenId"));
+        await value.save();
       }
       const user = await User.findOne({
         where: { email },
