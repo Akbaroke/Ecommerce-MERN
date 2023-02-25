@@ -7,6 +7,7 @@ const update = async (req: Request, res: Response, next: NextFunction) => {
   const { userId } = req.USER;
   const { count } = req.body;
   try {
+    console.log(typeof count);
     await Cart.findOne({
       where: {
         idStore: is as string,

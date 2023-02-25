@@ -24,7 +24,7 @@ const sendEmail = async (email: string, otp: string): Promise<boolean> => {
   };
 
   try {
-    await transporter().sendMail(mailOptions);
+    void transporter().sendMail(mailOptions);
     return await Promise.resolve(true);
   } catch (error: any) {
     return await Promise.resolve(false);
@@ -44,7 +44,7 @@ const sendEmailAfterVerification = async (email: string, nama: string) => {
   };
 
   try {
-    await transporter().sendMail(mailOptions);
+    void transporter().sendMail(mailOptions);
     return await Promise.resolve(true);
   } catch (error: any) {
     return await Promise.resolve(false);
@@ -71,7 +71,7 @@ const sendEmailForCollaboration = async (
   };
 
   try {
-    await transporter().sendMail(mailOptions);
+    void transporter().sendMail(mailOptions);
     return await Promise.resolve(true);
   } catch (error: any) {
     return await Promise.resolve(false);

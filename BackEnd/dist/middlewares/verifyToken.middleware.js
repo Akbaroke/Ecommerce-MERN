@@ -16,19 +16,25 @@ exports.checkExpiredToken = exports.verifyTokenAdmin = exports.verifyTokenAndAut
 const token_model_1 = __importDefault(require("../models/token.model"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const findTokenInDatabase = (token) => __awaiter(void 0, void 0, void 0, function* () {
-    return (yield token_model_1.default.findOne({ where: { accessToken: token } })) === null ? false : true;
+    const findToken = yield token_model_1.default.findOne({ where: { accessToken: token } });
+    if (findToken === null) {
+        return false;
+    }
+    else {
+        return true;
+    }
 });
 const verifyToken = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const authHeader = req.headers["authorization"];
-        if (!authHeader)
+        const authHeader = req.headers.authorization;
+        if (authHeader === undefined)
             return res.status(499).json({ success: false, error: { message: "token required" } });
         const token = authHeader.split(" ")[1];
         const findToken = yield findTokenInDatabase(token);
         if (!findToken)
             return res.status(400).json({ success: false, error: { message: "token invalid" } });
         jsonwebtoken_1.default.verify(token, process.env.ACCESSTOKENSECRET, (error, decoded) => __awaiter(void 0, void 0, void 0, function* () {
-            if (error)
+            if (error !== null)
                 return res.status(401).json({ status: false, error: { message: error.message } });
             req.USER = decoded;
             next();
@@ -41,10 +47,12 @@ const verifyToken = (req, res, next) => __awaiter(void 0, void 0, void 0, functi
 exports.verifyToken = verifyToken;
 const verifyTokenAndAuthorization = (req, res, next) => {
     try {
-        verifyToken(req, res, () => {
+        return verifyToken(req, res, () => {
             const { userId, role } = req.USER;
-            if (role === "admin" || userId === req.params.userId)
-                return next();
+            if (role === "admin" || userId === req.params.userId) {
+                next();
+                return;
+            }
             res.status(403).json({
                 success: false,
                 message: "You are not alowed to do that",
@@ -58,10 +66,12 @@ const verifyTokenAndAuthorization = (req, res, next) => {
 exports.verifyTokenAndAuthorization = verifyTokenAndAuthorization;
 const verifyTokenAdmin = (req, res, next) => {
     try {
-        verifyToken(req, res, () => {
+        return verifyToken(req, res, () => {
             const { role } = req.USER;
-            if (role === "admin")
-                return next();
+            if (role === "admin") {
+                next();
+                return;
+            }
             res.status(403).json({
                 success: false,
                 message: "You are not alowed to do that",
@@ -75,15 +85,15 @@ const verifyTokenAdmin = (req, res, next) => {
 exports.verifyTokenAdmin = verifyTokenAdmin;
 const checkExpiredToken = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const authHeader = req.headers["authorization"];
-        if (!authHeader)
+        const authHeader = req.headers.authorization;
+        if (authHeader === undefined)
             return res.status(499).json({ success: false, error: { message: "token required" } });
         const token = authHeader.split(" ")[1];
         const findToken = yield findTokenInDatabase(token);
         if (!findToken)
             return res.status(400).json({ success: false, error: { message: "token invalid" } });
         jsonwebtoken_1.default.verify(token, process.env.ACCESSTOKENSECRET, (error, _decoded) => __awaiter(void 0, void 0, void 0, function* () {
-            if (!error)
+            if (error == null)
                 return res.status(401).json({
                     success: false,
                     error: { message: "Your token has not expired" },

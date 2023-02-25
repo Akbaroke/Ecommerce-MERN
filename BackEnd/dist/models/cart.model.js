@@ -6,6 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const sequelize_1 = require("sequelize");
 const product_model_1 = __importDefault(require("./product.model"));
 const database_config_1 = __importDefault(require("../configs/database.config"));
+const store_model_1 = __importDefault(require("./store.model"));
 class Cart extends sequelize_1.Model {
 }
 Cart.init({
@@ -63,4 +64,6 @@ Cart.init({
 Cart.removeAttribute("id");
 product_model_1.default.hasOne(Cart, { foreignKey: "idProduct" });
 Cart.belongsTo(product_model_1.default, { as: "product", foreignKey: "idProduct" });
+store_model_1.default.hasOne(Cart, { foreignKey: "idStore" });
+Cart.belongsTo(store_model_1.default, { as: "store", foreignKey: "idStore" });
 exports.default = Cart;

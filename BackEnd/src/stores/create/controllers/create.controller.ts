@@ -52,16 +52,15 @@ const createStore = async (req: Request, res: Response, next: NextFunction): Pro
           idImage: x.getDataValue("idImage") as string,
           access: JSON.stringify([{ userId, role: "owner" as unknown as RSTORE }]),
         });
+        return res.status(200).json({
+          success: true,
+          data: { message: "create store successfully" },
+        });
       })
       .catch(async error => {
         await cloud.uploader.destroy(public_id);
         throw new Error(error);
       });
-
-    res.status(200).json({
-      success: true,
-      data: { message: "create store successfully" },
-    });
   } catch (error) {
     console.log(error);
     next(error);

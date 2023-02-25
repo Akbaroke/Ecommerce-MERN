@@ -27,7 +27,7 @@ const add = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
             where: { email, status: { [sequelize_1.Op.eq]: "active" }, expiredAt: null },
             attributes: ["id", "nama"],
         });
-        if (!user)
+        if (user == null)
             return res.status(404).json({ success: false, error: { message: "user not found" } });
         const findUser = yield store_model_1.default.count({
             where: { access: { [sequelize_1.Op.and]: { [sequelize_1.Op.like]: `%${user.getDataValue("id")}%` } } },
@@ -35,12 +35,12 @@ const add = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
         if (findUser >= 3)
             return res.status(400).json({ success: false, error: { message: "maximum 3" } });
         const store = yield store_model_1.default.findOne({
-            where: { idStore: idStore, access: { [sequelize_1.Op.like]: `%${userId}%` } },
+            where: { idStore, access: { [sequelize_1.Op.like]: `%${userId}%` } },
         });
-        if (!store)
+        if (store == null)
             return res.status(404).json({ success: false, error: { message: "store not found" } });
         const access = Array.from(JSON.parse(store.access));
-        if ((yield (0, checkUserInStore_util_1.checkUserInStore)(userId, access)) && (yield (0, checkUserInStore_util_1.checkUserInStoreAsOwner)(userId, access)) === false)
+        if (!(yield (0, checkUserInStore_util_1.checkUserInStoreAsOwner)(userId, access)))
             return res.status(400).json({ success: false, error: { message: "bad request" } });
         access.forEach((value) => {
             if (value.userId == user.getDataValue("id")) {
@@ -75,12 +75,12 @@ const accept = (req, res, next) => __awaiter(void 0, void 0, void 0, function* (
             where: { idStore, access: { [sequelize_1.Op.like]: `%${userId}%` } },
             attributes: ["idStore", "nameStore", "access"],
         });
-        if (!store)
+        if (store == null)
             return res.status(404).json({ success: false, error: { message: "user not found" } });
         const access = Array.from(JSON.parse(store.access));
-        if ((yield (0, checkUserInStore_util_1.checkUserInStore)(userId, access)) === false)
+        if (!(yield (0, checkUserInStore_util_1.checkUserInStore)(userId, access)))
             return res.status(400).json({ success: false, error: { message: "error" } });
-        let data = [];
+        const data = [];
         access.forEach((x, _i) => {
             if (x.userId === userId && (x === null || x === void 0 ? void 0 : x.status) === undefined)
                 throw new Error("already verification");

@@ -9,11 +9,11 @@ import update from "./update/controllers/update.controller";
 
 const route: Router = Router();
 
-route.get("/cart/:idStore", verifyToken, validateQuery(query.get), get);
+route.get("/cart/:idStore", verifyToken, get);
 route
   .route("/cart")
-  .post(verifyToken, validateQuery(query.isIp), validateSchema(schema.Cart.addAndUpdate), add)
-  .put(verifyToken, validateQuery(query.isIp), validateSchema(schema.Cart.addAndUpdate), update)
+  .post(verifyToken, validateQuery(query.isIp), validateSchema(schema.Cart.add), add)
+  .put(verifyToken, validateQuery(query.isIp), validateSchema(schema.Cart.update), update)
   .delete(verifyToken, validateQuery(query.isIp), deleteCart);
 
 export default route;

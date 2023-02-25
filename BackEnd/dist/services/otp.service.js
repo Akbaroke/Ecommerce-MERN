@@ -16,13 +16,12 @@ const sequelize_1 = require("sequelize");
 const otp_model_1 = __importDefault(require("../models/otp.model"));
 const node_cron_1 = __importDefault(require("node-cron"));
 node_cron_1.default.schedule("*/5 * * * *", () => __awaiter(void 0, void 0, void 0, function* () {
-    const deleteAllOtp = yield otp_model_1.default.destroy({
+    yield otp_model_1.default.destroy({
         where: {
             expiredAt: {
                 [sequelize_1.Op.lt]: Number(new Date().getTime()),
             },
         },
     });
-    console.log(deleteAllOtp);
 }));
 exports.default = node_cron_1.default;

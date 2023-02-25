@@ -28,7 +28,7 @@ const addProduct = (req, res, next) => __awaiter(void 0, void 0, void 0, functio
         });
         yield image_model_1.default.create({
             idCloud: public_id,
-            secure_url: secure_url,
+            secure_url,
         })
             .then((x) => __awaiter(void 0, void 0, void 0, function* () {
             yield product_model_1.default.create({
@@ -41,12 +41,12 @@ const addProduct = (req, res, next) => __awaiter(void 0, void 0, void 0, functio
                 detail,
                 idImage: x.getDataValue("idImage"),
             });
+            return res.status(200).json({ success: true, data: { message: "success" } });
         }))
             .catch((error) => __awaiter(void 0, void 0, void 0, function* () {
             yield cloud_config_1.default.uploader.destroy(public_id);
             throw new Error(error);
         }));
-        res.status(200).json({ success: true, data: { message: "success" } });
     }
     catch (error) {
         console.log(error);

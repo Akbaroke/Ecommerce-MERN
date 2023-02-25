@@ -11,13 +11,15 @@ exports.default = (0, multer_1.default)({
         fileSize: 1000000,
     },
     fileFilter: (_req, file, cb) => {
-        let ext = path_1.default.extname(file.originalname);
+        const ext = path_1.default.extname(file.originalname);
         if (ext !== ".jpg" && ext !== ".jpeg" && ext !== ".png") {
-            return cb(new Error("file type is not supported"));
+            cb(new Error("file type is not supported"));
+            return;
         }
         const fileSize = file.size;
         if (fileSize > 1000000) {
-            return cb(new Error("file max 1 mb"));
+            cb(new Error("file max 1 mb"));
+            return;
         }
         cb(null, true);
     },

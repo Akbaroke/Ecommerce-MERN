@@ -40,7 +40,7 @@ const createStore = (req, res, next) => __awaiter(void 0, void 0, void 0, functi
                     idStore: hash.encode(id),
                 },
             });
-            if (!checkId) {
+            if (checkId == null) {
                 valid = false;
             }
             else {
@@ -53,7 +53,7 @@ const createStore = (req, res, next) => __awaiter(void 0, void 0, void 0, functi
         });
         yield image_model_1.default.create({
             idCloud: public_id,
-            secure_url: secure_url,
+            secure_url,
         })
             .then((x) => __awaiter(void 0, void 0, void 0, function* () {
             yield store_model_1.default.create({
@@ -62,15 +62,15 @@ const createStore = (req, res, next) => __awaiter(void 0, void 0, void 0, functi
                 idImage: x.getDataValue("idImage"),
                 access: JSON.stringify([{ userId, role: "owner" }]),
             });
+            return res.status(200).json({
+                success: true,
+                data: { message: "create store successfully" },
+            });
         }))
             .catch((error) => __awaiter(void 0, void 0, void 0, function* () {
             yield cloud_config_1.default.uploader.destroy(public_id);
             throw new Error(error);
         }));
-        res.status(200).json({
-            success: true,
-            data: { message: "create store successfully" },
-        });
     }
     catch (error) {
         console.log(error);

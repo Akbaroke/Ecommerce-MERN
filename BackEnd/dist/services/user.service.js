@@ -16,13 +16,12 @@ const sequelize_1 = require("sequelize");
 const user_model_1 = __importDefault(require("../models/user.model"));
 const node_cron_1 = __importDefault(require("node-cron"));
 node_cron_1.default.schedule("0 0 0 * * *", () => __awaiter(void 0, void 0, void 0, function* () {
-    const deleteAllUser = yield user_model_1.default.destroy({
+    yield user_model_1.default.destroy({
         where: {
             expiredAt: {
                 [sequelize_1.Op.lt]: Number(new Date().getTime()),
             },
         },
     });
-    console.log(deleteAllUser);
 }));
 exports.default = node_cron_1.default;

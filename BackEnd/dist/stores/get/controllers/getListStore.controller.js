@@ -24,7 +24,7 @@ const getStores = (req, res, next) => __awaiter(void 0, void 0, void 0, function
             attributes: ["idStore", "nameStore", "access"],
             include: [{ model: image_model_1.default, as: "image", attributes: ["secure_url"] }],
         });
-        let data = [];
+        const data = [];
         stores.forEach((x, _i) => {
             var _a;
             const coba = Array.from(JSON.parse(x.access));
@@ -33,7 +33,7 @@ const getStores = (req, res, next) => __awaiter(void 0, void 0, void 0, function
                 idStore: x.getDataValue("idStore"),
                 nameStore: x.getDataValue("nameStore"),
                 role: filter[0].role,
-                image: (_a = x.image) === null || _a === void 0 ? void 0 : _a.secure_url,
+                image: (_a = x.image) === null || _a === void 0 ? void 0 : _a.getDataValue("secure_url"),
             });
         });
         if (data.length === 0)

@@ -31,7 +31,7 @@ const deleteProduct = (req, res, next) => __awaiter(void 0, void 0, void 0, func
             },
             include: [{ model: image_model_1.default, as: "image", attributes: ["idCloud"] }],
         });
-        if (!product)
+        if (product == null)
             return res.status(404).json({ success: false, error: { message: "product not found" } });
         yield image_model_1.default.destroy({
             where: {
@@ -40,6 +40,7 @@ const deleteProduct = (req, res, next) => __awaiter(void 0, void 0, void 0, func
             transaction: t,
         })
             .then(() => __awaiter(void 0, void 0, void 0, function* () {
+            var _a;
             yield product_model_1.default.destroy({
                 where: {
                     idStore: is,
@@ -47,17 +48,14 @@ const deleteProduct = (req, res, next) => __awaiter(void 0, void 0, void 0, func
                 },
                 transaction: t,
             });
+            yield cloud_config_1.default.uploader.destroy((_a = product === null || product === void 0 ? void 0 : product.image) === null || _a === void 0 ? void 0 : _a.getDataValue("idCloud"));
+            yield t.commit();
+            return res.status(200).json({ success: true, data: { message: "success" } });
         }))
-            .catch(error => {
-            t.rollback();
+            .catch((error) => __awaiter(void 0, void 0, void 0, function* () {
+            yield t.rollback();
             throw new Error(error);
-        });
-        yield cloud_config_1.default.uploader.destroy(product.image.idCloud).catch(error => {
-            t.rollback();
-            throw new Error(error);
-        });
-        t.commit();
-        res.status(200).json({ success: true, data: { message: "success" } });
+        }));
     }
     catch (error) {
         next(error);

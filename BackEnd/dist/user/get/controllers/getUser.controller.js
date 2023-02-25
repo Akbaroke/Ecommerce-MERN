@@ -24,7 +24,7 @@ const getUser = (req, res, next) => __awaiter(void 0, void 0, void 0, function* 
             attributes: ["id", "nama", "email", "status", "role"],
             include: [{ model: image_model_1.default, as: "image", attributes: ["secure_url"] }],
         });
-        if (!user)
+        if (user == null)
             return res.status(404).json({ success: false, error: { message: "user not found" } });
         res.status(200).json({ success: true, data: user });
     }

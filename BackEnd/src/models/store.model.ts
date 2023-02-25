@@ -42,11 +42,11 @@ Store.init(
       allowNull: true,
     },
     tax: {
-      type: DataTypes.BIGINT,
+      type: DataTypes.INTEGER,
       allowNull: true,
     },
     discount: {
-      type: DataTypes.BIGINT,
+      type: DataTypes.INTEGER,
       allowNull: true,
     },
     income: {

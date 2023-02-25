@@ -45,25 +45,26 @@ const deleteStore = (req, res, next) => __awaiter(void 0, void 0, void 0, functi
                 transaction: t,
             });
         }))
-            .catch(error => {
-            t.rollback();
+            .catch((error) => __awaiter(void 0, void 0, void 0, function* () {
+            yield t.rollback();
             throw new Error(error);
-        });
-        yield cloud_config_1.default.api.delete_resources_by_prefix(`project/${idStore}`).catch(() => {
-            t.rollback();
+        }));
+        yield cloud_config_1.default.api.delete_resources_by_prefix(`project/${idStore}`).catch(() => __awaiter(void 0, void 0, void 0, function* () {
+            yield t.rollback();
             throw new Error("error");
-        });
-        t.commit();
+        }));
+        yield t.commit();
     }
     catch (error) {
-        return next(error);
+        next(error);
+        return;
     }
     try {
         yield cloud_config_1.default.api.delete_folder(`project/${idStore}`);
         res.status(200).json({ success: true, data: { message: "success" } });
     }
     catch (error) {
-        return next(error);
+        next(error);
     }
 });
 exports.default = deleteStore;

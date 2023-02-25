@@ -26,6 +26,7 @@ class User extends Model<IUserModel> {
   status?: STATUS;
   role?: ROLE;
   image?: Image;
+  token?: Token;
   tokenId?: string;
   createdAt?: number;
   updatedAt?: number;

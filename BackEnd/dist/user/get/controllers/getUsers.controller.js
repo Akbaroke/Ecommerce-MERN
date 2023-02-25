@@ -16,11 +16,11 @@ const user_model_1 = __importDefault(require("../../../models/user.model"));
 const image_model_1 = __importDefault(require("../../../models/image.model"));
 const sequelize_1 = require("sequelize");
 const getUsers = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    let limit = Number.isNaN(Number(req.query.limit)) ? 10 : Number(req.query.limit);
-    let page = Number.isNaN(Number(req.query.page)) ? 1 : Number(req.query.page);
-    let search = req.query.search === undefined || req.query.search === "" ? "" : req.query.search;
-    let start = (page - 1) * limit;
-    let end = page * limit;
+    const limit = Number.isNaN(Number(req.query.limit)) ? 10 : Number(req.query.limit);
+    const page = Number.isNaN(Number(req.query.page)) ? 1 : Number(req.query.page);
+    const search = req.query.search === undefined || req.query.search === "" ? "" : req.query.search;
+    const start = (page - 1) * limit;
+    const end = page * limit;
     try {
         const users = yield user_model_1.default.findAndCountAll({
             where: {
@@ -29,11 +29,11 @@ const getUsers = (req, res, next) => __awaiter(void 0, void 0, void 0, function*
             attributes: ["id", "nama", "email", "status", "role"],
             order: [["updatedAt", "DESC"]],
             include: [{ model: image_model_1.default, as: "image", attributes: ["secure_url"] }],
-            limit: limit,
+            limit,
             offset: start,
         });
-        let count = users.count;
-        let pagination = {};
+        const count = users.count;
+        const pagination = {};
         Object.assign(pagination, { totalRow: users.count, totalPage: Math.ceil(count / limit) });
         if (end < count) {
             Object.assign(pagination, { next: { page: page + 1, limit, remaining: count - (start + limit) } });

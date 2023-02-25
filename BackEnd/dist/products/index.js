@@ -18,7 +18,7 @@ route.post("/product/:idStore", verifyToken_middleware_1.verifyToken, verifyFile
 route.get("/products/:idStore", verifyToken_middleware_1.verifyToken, (0, verifyQuery_middleware_1.validateQuery)(verifyQuery_middleware_1.query.get), getProduct_controller_1.default);
 route.get("/products/category/:idStore", verifyToken_middleware_1.verifyToken, getCatagoryProducts_1.default);
 route
-    .route("/")
+    .route("/product")
     .delete(verifyToken_middleware_1.verifyToken, (0, verifyQuery_middleware_1.validateQuery)(verifyQuery_middleware_1.query.isIp), deleteProduct_controller_1.default)
     .put(verifyToken_middleware_1.verifyToken, (0, verifyQuery_middleware_1.validateQuery)(verifyQuery_middleware_1.query.isIp), verifyFile_middleware_1.default, (0, verifySchemas_middleware_1.validateSchema)(verifySchemas_middleware_1.schema.Product.update), updateProduct_controller_1.default);
 exports.default = route;
